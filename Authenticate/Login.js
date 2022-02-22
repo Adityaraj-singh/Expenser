@@ -1,12 +1,15 @@
-import { StyleSheet,SafeAreaView, Text,Button,Pressable , TouchableNativeFeedback,ImageBackground,TouchableOpacity,View ,TextInput ,Image} from 'react-native';
+import { StyleSheet,SafeAreaView, Text,Button,Pressable ,ImageBackground,View ,TextInput ,Image} from 'react-native';
 
 
 
 const Login =({Setsignup})=>{
 
     return(
-<View style={stylesheet.main_container} >
 
+
+<View style={stylesheet.main_container} >
+<ImageBackground source={require('../assets/Background.png')} style={stylesheet.background} >
+<Text fadeDuration={2000}  style={stylesheet.main_label}   numberOfLines={4}  onPress={()=>console.log('PResseingg')}>Expenser</Text>
 <Text style={stylesheet.login_lable}>
               Hello
             </Text>
@@ -24,6 +27,8 @@ const Login =({Setsignup})=>{
     </View>
 
         <Text onPress={()=>Setsignup(true)} style={stylesheet.signupdirect_text}>Don't Have an Account?<Text style={stylesheet.inner_signup_direct}>Signup</Text></Text>
+</ImageBackground>
+
 </View>
 
     )
@@ -31,51 +36,63 @@ const Login =({Setsignup})=>{
 }
 
 const  stylesheet=StyleSheet.create({
+main_label:{
+    position:'relative',
+    fontSize:30,
+    fontWeight:'bold',
+    bottom:'5%'
+  
+},  
+
     login_lable:{
         color:'#4F4F4F',
-        width:'100%',
-        alignSelf:'flex-start',
-        fontSize:24,
+        width:'95%',
+        alignSelf:'center',
+        fontSize:20,
         fontWeight:'bold',
        
     },
     login_lable2:{
         color:'#4F4F4F',
-        width:'100%',
-        alignSelf:'flex-start',
-        fontSize:24,
+        width:'95%',
+        alignSelf:'center',
+        fontSize:20,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
     },
     login_lable3:{
         color:'#4F4F4F',
-        width:'100%',
-        alignSelf:'flex-start',
-        fontSize:24,
+        width:'95%',
+        alignSelf:'center',
+        fontSize:20,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
     },
  main_container:{
     
-    
-     flexGrow:1,
-     width:'95%',
+        backgroundColor:'red',
+
+   
+     width:'100%',
      height:'100%',
     
         alignItems:'center',
-     alignSelf:'center'
+     alignSelf:'center',
+    
   
  },
  inner_container:{ 
     top:20,
  height:300,
- width:'90%',
+ width:'100%',
     alignItems:'center',
     display:'flex',
     flexDirection:'column',
     justifyContent:'space-around',
+    paddingLeft:10,
+    paddingRight:10
  },
  input:{
     width:"100%",
@@ -89,7 +106,14 @@ const  stylesheet=StyleSheet.create({
    
     
        
-}
+},
+background:{
+  
+    justifyContent: "center",
+    width: '100%',
+    height: '100%',
+  
+  }
 ,
 logo:{
     height:100,

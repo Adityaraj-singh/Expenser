@@ -4,24 +4,27 @@ import { backgroundColor, borderBottomColor } from 'react-native/Libraries/Compo
 import { useState } from 'react';
 import Login from './Authenticate/Login';
 import Signup from './Authenticate/Signup';
+import TopNav from './Nav/TopNav';
+
 
 export default function App() {
   
    const [signup,Setsignup]=useState(false)
+
+// { signup ? <Signup Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
+   
   return (
     <SafeAreaView style={styles.container}>
           
      <StatusBar style="auto"    networkActivityIndicatorVisible={true}  />
 
-     <ImageBackground source={require('./assets/Background.png')} style={styles.background} >
-     <Text fadeDuration={2000}    numberOfLines={4} style={styles.text} onPress={()=>console.log('PResseingg')}>Expenser</Text>
+
      <View style={styles.buttons}>
-     { signup ? <Signup Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
-   
+     <TopNav style={styles.top_navbar} />
+     
      </View> 
 
 
-        </ImageBackground>
      
     </SafeAreaView>
   );
@@ -44,15 +47,8 @@ const styles = StyleSheet.create({
   ,
   buttons:{
     width:'100%',
-    height:'80%',
-    
-    
-    marginTop:'auto'
-  
-  },
-  button:{
-    width:'100%',
-    color:'green'
+    height:'100%',
+    paddingTop:30
   }
   ,
   background:{
@@ -62,6 +58,7 @@ const styles = StyleSheet.create({
     height: '100%',
   
   },
+  
   text:{
     position:'absolute',
     top:'2%',
@@ -71,14 +68,5 @@ const styles = StyleSheet.create({
     color:'black',
     alignSelf:'flex-start'
   },
-  loader: {
-    position:'absolute',
-    top:'50%',
-    zIndex:2
-  },
-  background:{
-    width: '100%',
-    height: '100%',
-
-  }
+ 
 });

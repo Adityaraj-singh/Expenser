@@ -5,7 +5,8 @@ const Signup=({Setsignup})=>{
 
     return(
         <View style={stylesheet.main_container} >
-       
+            <ImageBackground source={require('../assets/Background.png')} style={stylesheet.background} >
+        
             <Text style={stylesheet.signup_lable2}>
               Hello
             </Text>
@@ -18,13 +19,14 @@ const Signup=({Setsignup})=>{
             <TextInput  placeholder='Username' backgroundColor='none' style={stylesheet.input}  />
             <TextInput  placeholder='Full Name' backgroundColor='none' style={stylesheet.input}  />
             <TextInput secureTextEntry={true} placeholder='Password' style={stylesheet.input} />
-            <Pressable style={stylesheet.button} >
+            <Pressable style={stylesheet.button} onPress={()=>console.log('Presseddd')} >
       <Text style={stylesheet.text}>{'Signup->'}</Text>
     </Pressable>
             </View>
         
                 <Text onPress={()=>Setsignup(false)} style={stylesheet.signupdirect_text}>ALready have an account?<Text style={stylesheet.inner_text_color}>Login</Text></Text>
-
+            </ImageBackground>
+            
         </View>
         
             )
@@ -33,28 +35,36 @@ const Signup=({Setsignup})=>{
 
 
 const  stylesheet=StyleSheet.create({
+    main_label:{
+        position:'absolute',
+        fontSize:30,
+        fontWeight:'bold',
+        top:'10%'
+      
+    },  
     signup_lable2:{
         color:'#4F4F4F',
-        width:'100%',
-        alignSelf:'flex-start',
-        fontSize:24,
+        width:'95%',
+        alignSelf:'center',
+        fontSize:20,
         fontWeight:'bold',
        
     },
     signup_lable22:{
         color:'#4F4F4F',
-        width:'100%',
-        alignSelf:'flex-start',
-        fontSize:24,
+        width:'95%',
+
+        alignSelf:'center',
+        fontSize:20,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
     },
     signup_lable23:{
         color:'#4F4F4F',
-        width:'100%',
-        alignSelf:'flex-start',
-        fontSize:24,
+        width:'95%',
+        alignSelf:'center',
+        fontSize:20,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
@@ -64,22 +74,26 @@ const  stylesheet=StyleSheet.create({
  main_container:{
     
     
-     flexGrow:1,
-     width:'95%',
-     height:'100%',
-    
-        alignItems:'center',
-     alignSelf:'center'
+    backgroundColor:'red',
+
+   
+    width:'100%',
+    height:'100%',
+   
+       alignItems:'center',
+    alignSelf:'center',
   
  },
  inner_container:{ 
-    top:20,
+    top:10,
  height:300,
- width:'90%',
+ width:'100%',
     alignItems:'center',
     display:'flex',
     flexDirection:'column',
     justifyContent:'space-around',
+    paddingLeft:10,
+    paddingRight:10
  },
  input:{
      width:"100%",
@@ -131,7 +145,15 @@ inner_text_color:{
     bottom:-40,
     color:'#2F80ED',
     fontSize:14
-}
+},
+background:{
+  
+    justifyContent: "center",
+    width: '100%',
+    height: '100%',
+  
+  }
+,
   
 })
 
