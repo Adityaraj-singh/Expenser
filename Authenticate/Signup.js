@@ -37,7 +37,7 @@ const  stylesheet=StyleSheet.create({
         color:'#4F4F4F',
         width:'100%',
         alignSelf:'flex-start',
-        fontSize:30,
+        fontSize:24,
         fontWeight:'bold',
        
     },
@@ -45,7 +45,7 @@ const  stylesheet=StyleSheet.create({
         color:'#4F4F4F',
         width:'100%',
         alignSelf:'flex-start',
-        fontSize:30,
+        fontSize:24,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
@@ -54,7 +54,7 @@ const  stylesheet=StyleSheet.create({
         color:'#4F4F4F',
         width:'100%',
         alignSelf:'flex-start',
-        fontSize:30,
+        fontSize:24,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
@@ -122,15 +122,15 @@ signupdirect_text:{
     alignSelf:'center',
     bottom:-40,
     color:'black',
-    fontSize:20
+    fontSize:14
 },
 
 inner_text_color:{
     position:'relative',
     alignSelf:'center',
-    bottom:-60,
+    bottom:-40,
     color:'#2F80ED',
-    fontSize:20 
+    fontSize:14
 }
   
 })

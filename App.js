@@ -4,6 +4,7 @@ import { backgroundColor, borderBottomColor } from 'react-native/Libraries/Compo
 import { useState } from 'react';
 import Login from './Authenticate/Login';
 import Signup from './Authenticate/Signup';
+
 export default function App() {
   
    const [signup,Setsignup]=useState(false)

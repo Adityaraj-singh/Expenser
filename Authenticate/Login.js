@@ -35,7 +35,7 @@ const  stylesheet=StyleSheet.create({
         color:'#4F4F4F',
         width:'100%',
         alignSelf:'flex-start',
-        fontSize:30,
+        fontSize:24,
         fontWeight:'bold',
        
     },
@@ -43,7 +43,7 @@ const  stylesheet=StyleSheet.create({
         color:'#4F4F4F',
         width:'100%',
         alignSelf:'flex-start',
-        fontSize:30,
+        fontSize:24,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
@@ -52,7 +52,7 @@ const  stylesheet=StyleSheet.create({
         color:'#4F4F4F',
         width:'100%',
         alignSelf:'flex-start',
-        fontSize:30,
+        fontSize:24,
         fontWeight:'bold',
         borderBottomColor:'black',
         borderBottomWidth:2
@@ -84,7 +84,10 @@ const  stylesheet=StyleSheet.create({
     borderWidth:4,
     paddingLeft:20,
     borderColor:'gray',
-    borderRadius:10
+    borderRadius:10,
+    shadowColor:'blue',
+   
+    
        
 }
 ,
@@ -116,17 +119,18 @@ button: {
 signupdirect_text:{
 position:'relative',
 alignSelf:'center',
-bottom:-60,
+bottom:-40,
 color:'black',
-fontSize:20
+fontSize:14
 },
 inner_signup_direct:{
     position:'relative',
     alignSelf:'center',
-    bottom:-40,
+    bottom:-20,
     color:'#2F80ED',
-    fontSize:20
+    fontSize:14
     }
 })
+
 
 export default Login
