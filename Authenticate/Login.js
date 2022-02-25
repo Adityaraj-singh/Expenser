@@ -9,7 +9,7 @@ const Login =({Setsignup})=>{
 
 <View style={stylesheet.main_container} >
 <ImageBackground source={require('../assets/Background.png')} style={stylesheet.background} >
-<Text fadeDuration={2000}  style={stylesheet.main_label}   numberOfLines={4}  onPress={()=>console.log('PResseingg')}>Expenser</Text>
+
 <Text style={stylesheet.login_lable}>
               Hello
             </Text>
@@ -72,11 +72,11 @@ main_label:{
     },
  main_container:{
     
-        backgroundColor:'red',
-
+ 
+      
    
      width:'100%',
-     height:'100%',
+     height:'100%'  ,
     
         alignItems:'center',
      alignSelf:'center',

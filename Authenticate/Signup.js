@@ -6,7 +6,7 @@ const Signup=({Setsignup})=>{
     return(
         <View style={stylesheet.main_container} >
             <ImageBackground source={require('../assets/Background.png')} style={stylesheet.background} >
-        
+            
             <Text style={stylesheet.signup_lable2}>
               Hello
             </Text>
@@ -74,7 +74,6 @@ const  stylesheet=StyleSheet.create({
  main_container:{
     
     
-    backgroundColor:'red',
 
    
     width:'100%',
