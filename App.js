@@ -7,10 +7,11 @@ import Signup from './Authenticate/Signup';
 import Topbar from './Navbar/Topbar';
 import Sidebar from './Navbar/Sidebar';
 import Dashboard from './Dashboard/Dashboard';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import GroupList from './Groups/Groups';
 import ExpenseDetail from './Groups/ExpenseDetail';
+
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   const Item = ({ item, onPress, backgroundColor, textColor }) => (
@@ -18,6 +19,9 @@ export default function App() {
       <Text style={[styles.title, textColor]}>{item.title}</Text>
     </TouchableOpacity>
   );
+
+
+  const Drawer = createDrawerNavigator();
   const DATA = [
     {
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -34,7 +38,7 @@ export default function App() {
   ];
 
   const [selectedId, setSelectedId] = useState('bd7acbea-c1b1-46c2-aed5-3ad53abb28ba')
-  const stack = createNativeStackNavigator()
+
   const renderItem = ({ item }) => {
     const backgroundColor = item.id === selectedId ? "#4293FF" : "none";
     const color = item.id === selectedId ? 'white' : 'black';
@@ -51,8 +55,6 @@ export default function App() {
     );
   };
   const [signup, Setsignup] = useState(false)
-  //  { signup ? <Signup Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
-
   const [sidebar, Setsidebar] = useState(false)
   /*
 
@@ -63,23 +65,20 @@ export default function App() {
 
   */
 
+
   return (
-    <SafeAreaView style={styles.container}>
 
-      <StatusBar style="auto" animated={true} showHideTransition='fade' barStyle='dark-content' networkActivityIndicatorVisible={true} />
-      <View style={styles.buttons}>
-        <View style={styles.buttons} >
-          <Topbar Setsidebar={Setsidebar} sidebar={sidebar} />
-          {sidebar ? <Sidebar Setsidebar={Setsidebar} DATA={DATA} renderItem={renderItem} selectedId={selectedId} /> : null}
-        </View>
-      </View>
+    <NavigationContainer>
+      <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Screen name="Home" component={Dashboard} />
+        <Drawer.Screen name="Notifications" component={GroupList} />
+      </Drawer.Navigator>
+    </NavigationContainer>
 
-      <View style={styles.grouplist}>
-        <ExpenseDetail />
-      </View>
-    </SafeAreaView>
-  );
+  )
 }
+
+
 
 const styles = StyleSheet.create({
   grouplist: {

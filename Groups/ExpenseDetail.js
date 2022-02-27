@@ -4,16 +4,18 @@ import { FlatList, StyleSheet, SafeAreaView, Text, Pressable, ImageBackground, T
 import { FontAwesome5 } from '@expo/vector-icons';
 import { exp } from "react-native/Libraries/Animated/Easing";
 import { useState } from "react";
-
-
+import { Provider as PaperProvider } from 'react-native-paper';
+import { Switch } from 'react-native-paper';
 const ExpenseDetail = () => {
 
+    const [isSwitchOn, setIsSwitchOn] = useState(false);
 
+    const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
     return (
 
         <View>
-            <Text>Expense detail</Text>
+
 
             <View style={[styles.card, styles.shadowProp]}>
                 <Text style={styles.heading}>  Expense  Details</Text>
@@ -29,7 +31,7 @@ const ExpenseDetail = () => {
                         />
                     </View>
                     <View>
-                        <Text style={styles.heading2}>  Expense  Amount</Text>
+                        <Text style={styles.heading2}>  Expense  AmountS</Text>
                         <TextInput
                             style={styles.input}
 
@@ -40,9 +42,10 @@ const ExpenseDetail = () => {
 
                         />
                     </View>
+                    <Text style={styles.heading2}> Participants</Text>
+                    <View style={styles.participants}>
+                        <Text>  <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />;</Text>
 
-                    <View>
-                        <Text style={styles.heading2}> Participants</Text>
                     </View>
 
                 </View>

@@ -47,7 +47,7 @@ const GroupList = () => {
     return (
 
         <View style={styles.container}>
-
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginLeft: 'auto', marginRight: 'auto', borderBottomColor: 'black', borderBottomWidth: 2, width: '92%', textAlign: 'center', marginBottom: 20 }}>Groups</Text>
             <FlatList
                 data={groups}
                 renderItem={renderItem}
