@@ -1,82 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, SafeAreaView, Text, Button, TouchableNativeFeedback, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
 import { backgroundColor, borderBottomColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
-import { useState } from 'react';
+import * as React from 'react';
 import Login from './Authenticate/Login';
 import Signup from './Authenticate/Signup';
 import Topbar from './Navbar/Topbar';
 import Sidebar from './Navbar/Sidebar';
 import Dashboard from './Dashboard/Dashboard';
 import GroupList from './Groups/Groups';
-import ExpenseDetail from './Groups/ExpenseDetail';
+import AddExpense from './Groups/AddExpense';
+import { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-
+import { useState } from 'react';
+import Navigation from './Navigation/Navigation';
+import GroupDetail from './Groups/GroupDetail';
 export default function App() {
-  const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-      <Text style={[styles.title, textColor]}>{item.title}</Text>
-    </TouchableOpacity>
-  );
 
-
-  const Drawer = createDrawerNavigator();
-  const DATA = [
-    {
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      title: 'Dashboard',
-    },
-    {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      title: 'Groups',
-    },
-    {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      title: 'Friends',
-    },
-  ];
-
-  const [selectedId, setSelectedId] = useState('bd7acbea-c1b1-46c2-aed5-3ad53abb28ba')
-
-  const renderItem = ({ item }) => {
-    const backgroundColor = item.id === selectedId ? "#4293FF" : "none";
-    const color = item.id === selectedId ? 'white' : 'black';
-
-    return (
-      <Item
-        item={item}
-        onPress={() => setSelectedId(item.id)}
-        backgroundColor={{ backgroundColor }}
-        alignItems={'center'}
-        textColor={{ color }}
-
-      />
-    );
-  };
   const [signup, Setsignup] = useState(false)
   const [sidebar, Setsidebar] = useState(false)
-  /*
 
-<View style={styles.buttons} >
-      <Topbar Setsidebar={Setsidebar} sidebar={sidebar} />
-      {sidebar ? <Sidebar Setsidebar={Setsidebar} DATA={DATA} renderItem={renderItem} selectedId={selectedId} /> : null}
-    </View>
+  const [user, Setuser] = useState(1)
 
-  */
-
-
+  const credentials = {
+    username: 'adityaraj',
+    password: 'password'
+  }
+  //    {user ? <Navigation /> : signup ? <Signup Setuser={Setuser} Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
   return (
 
-    <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={Dashboard} />
-        <Drawer.Screen name="Notifications" component={GroupList} />
-      </Drawer.Navigator>
-    </NavigationContainer>
+    <View style={styles.buttons}>
 
+    </View>
   )
 }
+
 
 
 
@@ -98,7 +55,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    top: 5,
+    top: 0,
     zIndex: 1
   }
 
