@@ -1,7 +1,7 @@
 import { StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons';
-
+import React from 'react';
 import { useEffect } from 'react';
 
 const Topbar = ({ Setsidebar, sidebar }) => {
@@ -43,7 +43,7 @@ const Topbar = ({ Setsidebar, sidebar }) => {
 const stylesheet = StyleSheet.create({
   backbutton: {
     position: 'relative',
-    top: 0
+    top: 5
   },
   main_container: {
 
@@ -81,7 +81,7 @@ const stylesheet = StyleSheet.create({
   },
   hamburger: {
     height: 40, width: 40,
-    marginTop: '30%'
+    marginTop: '32%'
   }
 })
 

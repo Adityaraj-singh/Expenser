@@ -3,7 +3,13 @@ import { FlatList, StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackg
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { exp } from "react-native/Libraries/Animated/Easing";
+import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import NewGroup from "../Dashboard/Components/NewGroup";
+import GroupDetail from "./GroupDetail";
+import { createStackNavigator } from "@react-navigation/stack";
+import { NavigationContainer } from "@react-navigation/native";
 const groups = [{
     id: 0,
     Name: 'Lunch',
@@ -17,9 +23,15 @@ const groups = [{
     Desc: 'asasas'
 }
 ]
-const GroupList = () => {
+const GroupList = ({ navigation }) => {
+    function Selectgroups(id) {
+        setSelectedId(id)
 
+        Setselectedgroup(id)
 
+        navigation.navigate('GroupDetail')
+    }
+    const [selectedgroup, Setselectedgroup] = useState(false)
     const Item = ({ item, onPress, backgroundColor, textColor }) => (
         <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
             <Text style={[styles.Name, textColor]}> <FontAwesome5 name="users" size={20} color="green" /> {item.Name}</Text>
@@ -29,6 +41,7 @@ const GroupList = () => {
         </TouchableOpacity>
     );
 
+    const [create, Setcreate] = useState(false)
     const renderItem = ({ item }) => {
         const backgroundColor = item.id === selectedId ? "#6FCF97" : "#F2F2F2";
         const color = item.id === selectedId ? 'white' : 'black';
@@ -36,25 +49,48 @@ const GroupList = () => {
         return (
             <Item
                 item={item}
-                onPress={() => setSelectedId(item.id)}
+                onPress={() => Selectgroups(item.id)}
                 backgroundColor={{ backgroundColor }}
                 textColor={{ color }}
             />
         );
     };
 
+
+
+    const GroupList2 = () => {
+        return (
+            <View>
+                <View style={{ display: 'flex', flexDirection: 'row' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginLeft: 'auto', marginRight: 'auto', borderBottomColor: 'black', borderBottomWidth: 2, width: '92%', textAlign: 'center', marginBottom: 20 }}>Groups</Text>
+                    <AntDesign name="addusergroup" size={24} color="green" style={{ position: 'relative', right: 30 }} onPress={() => Setcreate(!create)} />
+                </View>
+                <View>
+                    {create ?
+
+                        <View style={{ marginBottom: 30 }}>
+
+                            <NewGroup />
+                        </View>
+                        : null}
+                </View>
+                <FlatList
+                    data={groups}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                    extraData={selectedId}
+                />
+            </View>
+        )
+    }
+
+
+
     const [selectedId, setSelectedId] = useState(null);
     return (
 
         <View style={styles.container}>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', marginLeft: 'auto', marginRight: 'auto', borderBottomColor: 'black', borderBottomWidth: 2, width: '92%', textAlign: 'center', marginBottom: 20 }}>Groups</Text>
-            <FlatList
-                data={groups}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                extraData={selectedId}
-            />
-
+            <GroupList2 />
         </View>
     )
 

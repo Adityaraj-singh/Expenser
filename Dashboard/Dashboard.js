@@ -1,4 +1,5 @@
 import React from "react";
+
 import {
     StyleSheet,
     SafeAreaView,
@@ -16,14 +17,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import NewGroup from "./Components/NewGroup";
 import TotalExpenses from "./Components/TotalExpenses";
+import AddExpense from "../Groups/AddExpense";
 
 const Dashboard = () => {
+
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Youn don't have any group</Text>
-            <View style={styles.newgroup}>
-                <TotalExpenses />
-            </View>
+            <TotalExpenses />
 
         </View>
     );

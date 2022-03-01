@@ -29,7 +29,7 @@ export default function App() {
   return (
 
     <View style={styles.buttons}>
-
+      {user ? <Navigation /> : signup ? <Signup Setuser={Setuser} Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
     </View>
   )
 }
