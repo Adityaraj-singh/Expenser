@@ -4,11 +4,23 @@ import { StyleSheet, Text, Pressable, View, TextInput, TouchableOpacity } from '
 import { FontAwesome } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from "react";
-import { Menu } from 'react-native-paper';
-
+import { Dropdown } from 'react-native-material-dropdown';
+import { LogBox } from 'react-native';
+import { useEffect } from "react";
 const Payment = ({ id }) => {
     const [amount, Setamount] = useState(0)
+    const [lender, Setlender] = useState('Select User')
+    const data = [{
+        value: 'Banana',
+    }, {
+        value: 'Mango',
+    }, {
+        value: 'Pear',
+    }]
+    useEffect(() => {
 
+        LogBox.ignoreLogs(['Animated: `useNativeDriver`', 'componentWillReceiveProps', 'componentWillUpdate']);
+    }, [])
     return (
         <View>
             <View style={[styles.card, styles.shadowProp]}  >
@@ -28,10 +40,9 @@ const Payment = ({ id }) => {
                     <Text style={styles.label1}>
                         Paying To
                     </Text>
-                    <TextInput
-                        style={styles.input}
-
-                        underlineColorAndroid="transparent"
+                    <Dropdown
+                        label='Favorite Fruit'
+                        data={data}
                     />
 
                 </View>
@@ -49,15 +60,15 @@ const Payment = ({ id }) => {
                 </View>
                 <View style={styles.uis}>
                     <View style={styles.user1}>
-                        <Text><FontAwesome name="user-circle-o" size={50} color="green" /></Text>
-                        <Text style={{ marginTop: 5, backgroundColor: '#A4CCFB', fontSize: 28, color: 'white', borderRadius: 5, fontWeight: 'bold' }} >Gagan</Text>
+                        <Text><FontAwesome name="user-circle-o" size={30} color="green" /></Text>
+                        <Text style={{ paddingHorizontal: 10, paddingVertical: 2, marginTop: 5, backgroundColor: '#A4CCFB', fontSize: 20, color: 'white', borderRadius: 5, fontWeight: 'bold' }} >Gagan</Text>
                     </View>
                     <View>
                         <Ionicons name="arrow-forward-sharp" size={50} color="black" />
                     </View>
                     <View style={styles.user2}>
-                        <Text><FontAwesome name="user-circle-o" size={50} color="green" /></Text>
-                        <Text style={{ marginTop: 5, backgroundColor: '#FBA4A4', fontSize: 28, color: 'white', borderRadius: 5, fontWeight: 'bold' }}>Gagan</Text>
+                        <Text><FontAwesome name="user-circle-o" size={30} color="green" /></Text>
+                        <Text style={{ paddingHorizontal: 10, paddingVertical: 2, marginTop: 5, backgroundColor: '#FBA4A4', fontSize: 20, color: 'white', borderRadius: 5, fontWeight: 'bold' }}>Gagan</Text>
                     </View>
 
                 </View>
@@ -65,7 +76,7 @@ const Payment = ({ id }) => {
                 <View style={styles.showamount}>
                     <Text style={{ marginTop: 'auto', marginBottom: 'auto', fontSize: 24 }}>{'200'}</Text>
                 </View>
-                <TouchableOpacity style={styles.settle} onPress={() => navigation.navigate('Payment')}>
+                <TouchableOpacity style={styles.settle}>
                     <Text style={styles.text}>
                         Settle
                     </Text>
@@ -83,11 +94,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignSelf: 'center',
         marginTop: 20,
-        width: '20%',
+
         borderRadius: 30,
         elevation: 3,
         height: 30,
         backgroundColor: '#2F80ED',
+        paddingHorizontal: 10
     },
     text: {
 
@@ -120,11 +132,13 @@ const styles = StyleSheet.create({
     },
     user1: {
         marginTop: 10,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingHorizontal: 10
     },
     user2: {
         marginTop: 10,
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingHorizontal: 10
     },
     label1: {
         fontSize: 18,
@@ -155,7 +169,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1
     },
     card: {
-        marginTop: 15,
+        marginTop: 10,
         backgroundColor: 'white',
         borderRadius: 8,
         paddingVertical: 15,
@@ -164,7 +178,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         overflow: 'scroll',
 
-        height: 500,
+        height: null,
     },
     shadowProp: {
         shadowColor: '#000',

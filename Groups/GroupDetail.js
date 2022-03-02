@@ -136,6 +136,7 @@ const GroupDetail = ({ navigation }) => {
         Setstatement(PMS.GroupBalanceStatement)
     }, [])
 
+
     return (
         <View style={styles.container}>
             <Pressable style={styles.addbutton} onPress={() => Setiscreate(!iscreate)} ><Text style={styles.addtext}>{iscreate ? null : <Ionicons name="add-circle-outline" size={15} color="black" />} {iscreate ? 'Cancel' : 'ADD'}</Text></Pressable>

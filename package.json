@@ -24,6 +24,8 @@
     "react-native": "0.64.3",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~2.1.0",
+    "react-native-material-dropdown": "^0.11.1",
+    "react-native-material-dropdown-v2-fixed": "^0.11.3",
     "react-native-paper": "^4.11.2",
     "react-native-reanimated": "^2.0.0-rc.3",
     "react-native-safe-area-context": "3.3.2",
@@ -31,7 +33,10 @@
     "react-native-web": "0.17.1",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
-    "react-navigator": "0.0.0-0"
+    "react-navigator": "0.0.0-0",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-thunk": "^2.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -18,12 +18,17 @@ import { useEffect } from "react";
 import NewGroup from "./Components/NewGroup";
 import TotalExpenses from "./Components/TotalExpenses";
 import AddExpense from "../Groups/AddExpense";
-
-const Dashboard = () => {
-
+import { useSelector, useDispatch } from "react-redux";
+const Dashboard = ({ navigation }) => {
+    const state = useSelector(state => state)
+    useEffect(() => {
+        console.log('dashboard')
+        console.log(state)
+    }, [])
     return (
         <View style={styles.container}>
             <TotalExpenses />
+
 
         </View>
     );

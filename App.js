@@ -1,37 +1,33 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, SafeAreaView, Text, Button, TouchableNativeFeedback, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
-import { backgroundColor, borderBottomColor } from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
-import * as React from 'react';
+import { StyleSheet, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
+
+import React from 'react';
 import Login from './Authenticate/Login';
 import Signup from './Authenticate/Signup';
-import Topbar from './Navbar/Topbar';
-import Sidebar from './Navbar/Sidebar';
-import Dashboard from './Dashboard/Dashboard';
-import GroupList from './Groups/Groups';
-import AddExpense from './Groups/AddExpense';
-import { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { useState } from 'react';
 import Navigation from './Navigation/Navigation';
-import GroupDetail from './Groups/GroupDetail';
+
+import { Provider } from 'react-redux';
+import { Store } from './contextStore/Store';
+
 export default function App() {
 
-  const [signup, Setsignup] = useState(false)
+
   const [sidebar, Setsidebar] = useState(false)
 
-  const [user, Setuser] = useState(1)
 
-  const credentials = {
-    username: 'adityaraj',
-    password: 'password'
-  }
   //    {user ? <Navigation /> : signup ? <Signup Setuser={Setuser} Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
-  return (
 
-    <View style={styles.buttons}>
-      {user ? <Navigation /> : signup ? <Signup Setuser={Setuser} Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} />}
-    </View>
+
+  return (
+    <Provider store={Store} >
+      <View style={styles.buttons}>
+        <Navigation />
+      </View>
+    </Provider>
   )
+
 }
 
 

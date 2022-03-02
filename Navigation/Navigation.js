@@ -14,6 +14,11 @@ import { useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import GroupDetail from '../Groups/GroupDetail';
 import Payment from '../Groups/Expenses/Payment';
+import AddFriend from '../Friends/Addfriends';
+import FriendList from '../Friends/FriendsList';
+import { useSelector } from 'react-redux';
+
+
 
 const Stack = createStackNavigator()
 const DashboardStack = () => {
@@ -45,6 +50,7 @@ const GroupsListstack = () => {
             <Stack.Screen name="Payment" title="GroupDetail" component={Payment} />
 
 
+
         </Stack.Navigator>
 
     )
@@ -52,15 +58,35 @@ const GroupsListstack = () => {
 
 const Navigation = () => {
 
+    const [user, Setuser] = useState(0)
+    const state = useSelector(state => state)
+    const credentials = {
+        username: 'adityaraj',
+        password: 'password'
+    }
+    const [signup, Setsignup] = useState(false)
     const Tab = createBottomTabNavigator();
-    return (
-        <NavigationContainer >
-            <Tab.Navigator screenOptions={{ headerShown: false }} >
-                <Tab.Screen name="Dashboard" title={'Homieess'} component={DashboardStack} />
-                <Tab.Screen name="Groups" component={GroupsListstack} />
-            </Tab.Navigator>
-        </NavigationContainer>
-    )
+    console.log('stating')
+    console.log(state)
+
+    if (state.userReducer.email && state.userReducer.email.length > 0) {
+        return (
+            <NavigationContainer  >
+                <Tab.Navigator screenOptions={{ headerShown: false }} >
+                    <Tab.Screen name="Dashboard" title={'Homieess'} component={DashboardStack} />
+                    <Tab.Screen name="Groups" component={GroupsListstack} />
+                    <Tab.Screen name="Friends" component={FriendList} />
+
+                </Tab.Navigator>
+            </NavigationContainer>
+        )
+    }
+    else {
+        return (
+            user ? <Navigation /> : signup ? <Signup Setuser={Setuser} Setsignup={Setsignup} /> : <Login Setsignup={Setsignup} Setuser={Setuser} />
+        )
+    }
+
 
 }
 

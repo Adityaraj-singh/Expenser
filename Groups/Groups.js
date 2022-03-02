@@ -10,6 +10,7 @@ import NewGroup from "../Dashboard/Components/NewGroup";
 import GroupDetail from "./GroupDetail";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
 const groups = [{
     id: 0,
     Name: 'Lunch',
@@ -24,6 +25,15 @@ const groups = [{
 }
 ]
 const GroupList = ({ navigation }) => {
+    const dispatch = useDispatch()
+    const state = useSelector(state => state)
+    console.log(state)
+
+    function Loguerout() {
+        console.log('working')
+        dispatch({ type: 'Signout' })
+        console.log(state)
+    }
     function Selectgroups(id) {
         setSelectedId(id)
 
@@ -43,7 +53,7 @@ const GroupList = ({ navigation }) => {
 
     const [create, Setcreate] = useState(false)
     const renderItem = ({ item }) => {
-        const backgroundColor = item.id === selectedId ? "#6FCF97" : "#F2F2F2";
+        const backgroundColor = item.id === selectedId ? "#6FCF97" : "green";
         const color = item.id === selectedId ? 'white' : 'black';
 
         return (
@@ -91,6 +101,9 @@ const GroupList = ({ navigation }) => {
 
         <View style={styles.container}>
             <GroupList2 />
+            <Pressable onPress={Loguerout} style={{ backgroundColor: 'red', paddingHorizontal: 5, paddingVertical: 5 }}>
+                <Text>Logout</Text>
+            </Pressable>
         </View>
     )
 
