@@ -4,23 +4,59 @@ import React, { useEffect, useState } from 'react'
 import { Signupapi } from '../API/Authenticate';
 const Signup = ({ Setsignup }) => {
     const [username, Setusername] = useState('')
-    const [email, Setemail] = useState('')
     const [password, Setpassword] = useState('')
-
+    const [emailerror, Setemailerror] = useState('')
+    const [passwrror, Setpasserror] = useState('')
+    const dispatch = useDispatch()
     async function Authenticate() {
-        if (username.length > 0 && email.length > 0 && password.length > 0) {
+        if (username.length > 0 && password.length > 0 && !emailerror && !passwrror) {
             let data = {
                 username: username,
                 password: password
             }
             const response = await Signupapi(data)
-            console.log('frontend-response')
-            console.log(response)
+
+            if (JSON.stringify(response.success) == 'true') {
+                console.log('frontend-response')
+
+                console.log(response.success)
+                dispatch({
+                    type: 'Authenticate',
+                    payload: {
+                        value: {
+                            id: response.token,
+                            username: response.username,
+                        }
+                    }
+                })
+            }
+            else {
+                Setemailerror(response.error)
+            }
 
         }
+        else if (!password && !username) {
+            Setemailerror('Please enter Username')
+            Setpasserror('please enter password')
+        }
+        else if (password && password.length < 8) {
+            Setpasserror('Password Should container atleast 8 chars')
+        }
+        else if (!password) {
+            Setpasserror('please enter password')
+        }
+        else if (!username) {
+            Setemailerror('Please enter Username')
+        }
+
 
     }
 
+
+    useEffect(() => {
+        Setemailerror('')
+        Setpasserror('')
+    }, [username, password])
     return (
         <View style={stylesheet.main_container} >
             <ImageBackground source={require('../assets/Background.png')} style={stylesheet.background} >
@@ -34,9 +70,15 @@ const Signup = ({ Setsignup }) => {
 
                 <View style={stylesheet.inner_container} >
                     <Text style={stylesheet.signup_lable23}>Signup</Text>
-                    <TextInput onChangeText={(text) => Setemail(text)} placeholder='Username' backgroundColor='none' style={stylesheet.input} />
-                    <TextInput placeholder='Full Name' onChangeText={(text) => Setusername(text)} backgroundColor='none' style={stylesheet.input} />
-                    <TextInput secureTextEntry={true} onChangeText={(text) => Setpassword(text)} placeholder='Password' style={stylesheet.input} />
+                    <View style={{ width: '90%' }}>
+                        <TextInput placeholder='Full Name' onChangeText={(text) => Setusername(text)} backgroundColor='none' style={stylesheet.input} />
+                        <Text style={{ alignSelf: 'flex-start', color: 'red' }}> {emailerror}</Text>
+                    </View>
+                    <View style={{ width: '90%' }}>
+                        <TextInput secureTextEntry={true} onChangeText={(text) => Setpassword(text)} placeholder='Password' style={stylesheet.input} />
+                        <Text style={{ alignSelf: 'flex-start', color: 'red' }}> {passwrror}</Text>
+                    </View>
+
                     <Pressable style={stylesheet.button} onPress={Authenticate} >
                         <Text style={stylesheet.text}>{'Signup->'}</Text>
                     </Pressable>
@@ -107,7 +149,7 @@ const stylesheet = StyleSheet.create({
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-around',
+        justifyContent: 'space-evenly',
         paddingLeft: 10,
         paddingRight: 10
     },
@@ -119,7 +161,6 @@ const stylesheet = StyleSheet.create({
         paddingLeft: 20,
         borderColor: 'gray',
         borderRadius: 10
-
     }
     ,
     logo: {

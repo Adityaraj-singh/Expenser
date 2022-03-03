@@ -66,10 +66,10 @@ const Navigation = () => {
     }
     const [signup, Setsignup] = useState(false)
     const Tab = createBottomTabNavigator();
-    console.log('stating')
-    console.log(state)
+    //   console.log('stating')
+    // console.log(state)
 
-    if (state.userReducer.email && state.userReducer.email.length > 0) {
+    if (state.userReducer.username && state.userReducer.username.length > 0) {
         return (
             <NavigationContainer  >
                 <Tab.Navigator screenOptions={{ headerShown: false }} >

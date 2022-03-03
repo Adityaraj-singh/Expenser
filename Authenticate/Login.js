@@ -1,52 +1,51 @@
 import { StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackground, View, TextInput, Image } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from 'react'
+import { Signinapi } from '../API/Authenticate';
 const Login = ({ Setsignup, Setuser }) => {
 
     const credentials = {
-        email: 'aditya@orgzit.com',
+        username: 'aditya@orgzit.com',
         password: 'password'
     }
     const dispatch = useDispatch()
     const userstate = useSelector(state => state)
-    const [email, Setemail] = useState('')
+    const [username, Setusername] = useState('')
     const [password, Setpassword] = useState('')
-    const [error, Seterror] = useState(false)
+    const [error, Seterror] = useState('')
 
-
-    useEffect(() => {
-        if (userstate.email && userstate.email.length > 0) {
-            Setuser(true)
+    async function Login() {
+        if (!username || !password) {
+            Seterror('Please fill both fields')
         }
 
-    }, [])
-    function Login() {
-        if (email == credentials.email) {
-            if (password == credentials.password) {
+        else {
+            const response = await Signinapi({ username, password })
+            if (JSON.stringify(response.success) == 'true') {
+                console.log('frontend-response')
+
+                console.log(response.success)
                 dispatch({
                     type: 'Authenticate',
                     payload: {
                         value: {
-                            id: 74,
-                            username: 'peter',
-                            email: email
+                            id: response.token,
+                            username: response.username,
                         }
-
                     }
                 })
-
-                Setuser(1)
-                console.log('as')
             }
             else {
-                console.log('incorrect')
+                Seterror(response.error)
             }
         }
-        else {
-            console.log(credentials.email, ' : ', email)
-            console.log('incorrectv outer')
-        }
+
+
     }
+
+    useEffect(() => {
+        Seterror('')
+    }, [username, password])
 
     return (
 
@@ -63,8 +62,11 @@ const Login = ({ Setsignup, Setuser }) => {
 
                 <View style={stylesheet.inner_container} >
                     <Text style={stylesheet.login_lable3}>Login</Text>
-                    <TextInput onChangeText={(text) => Setemail(text)} placeholder='Username' backgroundColor='none' style={stylesheet.input} />
+                    <TextInput onChangeText={(text) => Setusername(text)} placeholder='Username' backgroundColor='none' style={stylesheet.input} />
                     <TextInput onChangeText={(pp) => Setpassword(pp)} secureTextEntry={true} placeholder='Password' style={stylesheet.input} />
+                    <View>
+                        <Text style={{ alignSelf: 'flex-start', color: 'red' }}> {error}</Text>
+                    </View>
                     <Pressable style={stylesheet.button} onPress={Login} >
                         <Text style={stylesheet.text}>{'Login->'}</Text>
                     </Pressable>
