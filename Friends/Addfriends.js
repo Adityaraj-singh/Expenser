@@ -5,9 +5,27 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useState } from "react";
 
 import { MaterialIcons } from '@expo/vector-icons';
-
+import { useSelector, useDispatch } from "react-redux";
 const AddFriend = ({ Setvisible }) => {
+    const dispatch = useDispatch()
+    const [friend, Setfriend] = useState('')
+    const friends = useSelector(state => state.FriendsReducer).length
+    function add() {
 
+        dispatch({
+            type: 'AddFriend',
+            payload:
+            {
+                value:
+                {
+                    id: friends + 1,
+                    name: friend
+                }
+            }
+
+        })
+        console.log('added')
+    }
     return (
 
         <View style={[styles.card, styles.shadowProp]}  >
@@ -17,13 +35,13 @@ const AddFriend = ({ Setvisible }) => {
                 </Text>
             </Pressable>
 
-            <Text style={styles.heading}>Add Friends</Text>
+            <Text style={styles.heading}>Invite via Email</Text>
             <View style={{ marginTop: 10 }}>
                 <Text style={styles.label}>Friend's email</Text>
-                <TextInput style={styles.input} placeholder={'Enter email'} />
+                <TextInput style={styles.input} onChangeText={(text) => Setfriend(text)} placeholder={'Enter name'} />
             </View>
-            <Pressable style={styles.add}>
-                <Text style={styles.text}>Add Friend</Text>
+            <Pressable onPress={add} style={styles.add}>
+                <Text style={styles.text}>Send invite</Text>
             </Pressable>
         </View>
     )
@@ -46,7 +64,7 @@ const styles = StyleSheet.create({
     },
     text: {
 
-
+        paddingHorizontal: 10,
         fontWeight: 'bold',
         color: 'white',
     },

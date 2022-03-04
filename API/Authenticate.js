@@ -26,9 +26,10 @@ export const Signupapi = async (data) => {
 export const Signinapi = async (data) => {
 
 
-    // console.log(JSON.stringify(data))
+
+    console.log(JSON.stringify(data))
     try {
-        const res = await fetch('http://192.168.1.8:8000/signin/', {
+        const res = await fetch('http://192.168.1.5:8000/signin/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -40,6 +41,7 @@ export const Signinapi = async (data) => {
     }
 
     catch (err) {
+
         return err
 
     }

@@ -4,7 +4,35 @@ import { AntDesign } from '@expo/vector-icons'
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect } from 'react';
 import { FontAwesome5 } from '@expo/vector-icons';
-const NewGroup = () => {
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+const NewGroup = ({ Setcreate }) => {
+    const [groupname, Setgroupname] = useState('')
+    const groups = useSelector(state => state.GroupReducer).length
+    const [error, Seterror] = useState('')
+    //console.log(groups)
+    const dispatch = useDispatch()
+    function add() {
+        if (groupname.length > 4) {
+            dispatch({
+                type: 'AddGroup',
+                payload: {
+                    value: {
+                        groupid: groups + 1,
+                        groupName: groupname,
+                        members: []
+                    }
+                }
+            })
+            Setcreate(false)
+        }
+
+        else {
+            Seterror('Group name should be greater than 4')
+        }
+
+
+    }
 
     return (
         <View style={[styles.card, styles.shadowProp]}>
@@ -18,6 +46,7 @@ const NewGroup = () => {
 
                 <Text style={styles.input_label}>Group Name</Text>
                 <TextInput
+                    onChangeText={(text) => Setgroupname(text)}
                     placeholder="Enter Group Name"
                     style={styles.input}
                 />
@@ -27,12 +56,14 @@ const NewGroup = () => {
                     style={styles.input}
                 />
 
-                <Pressable style={styles.Button}>
+                <Pressable style={styles.Button} onPress={add}>
                     <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'white' }}>
                         Create{' '}
                         <FontAwesome5 name="users" size={18} color="white" backgroundColor="transparent" />
+
                     </Text>
                 </Pressable>
+                <Text style={{ color: 'red', alignSelf: 'center' }}>{error}</Text>
             </View>
         </View>
     )

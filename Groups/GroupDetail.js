@@ -9,10 +9,24 @@ import { useState } from "react";
 import Expenses from "./Expenses/Expenses";
 import AddExpense from "./AddExpense";
 import GroupBalance from "./Expenses/GroupBalance";
-
-const GroupDetail = ({ navigation }) => {
+import AddFriendsToGroup from "./Expenses/AddFriends";
+import { useSelector } from "react-redux";
+const GroupDetail = ({ route, navigation }) => {
+    //  console.log('route')
+    //  console.log(route)
     const [iscreate, Setiscreate] = useState(false)
     const [statement, Setstatement] = useState([])
+    const [addingfriend, Setaddingfriend] = useState(false)
+    const { groupname, GroupId } = route.params
+    const state = useSelector(state => state.GroupReducer)
+    const current_group = state.filter(item => {
+        if (item.groupid == GroupId)
+            return item
+    })
+
+    const current_group_members = current_group[0].members
+    console.log('memberingg')
+    console.log(current_group_members)
     const expenses = [{
         id: 0,
         month: 'Feb',
@@ -55,7 +69,8 @@ const GroupDetail = ({ navigation }) => {
     }]
 
     useEffect(() => {
-
+        //     console.log('grp detail')
+        //  console.log(route.params)
         var PMS = PMS || {}
 
         PMS.GroupBalanceData = PMS.GroupBalanceData || {};
@@ -132,40 +147,56 @@ const GroupDetail = ({ navigation }) => {
                 });
             });
         });
-        console.log(PMS.GroupBalanceStatement)
+        //    console.log(PMS.GroupBalanceStatement)
         Setstatement(PMS.GroupBalanceStatement)
     }, [])
 
+    if (addingfriend) {
+        return (
+            <AddFriendsToGroup navigation={navigation} addingfriend={addingfriend} Setaddingfriend={Setaddingfriend} groupname={route.params.groupName} groupid={route.params.GroupId} />
+        )
+    }
+    else
 
-    return (
-        <View style={styles.container}>
-            <Pressable style={styles.addbutton} onPress={() => Setiscreate(!iscreate)} ><Text style={styles.addtext}>{iscreate ? null : <Ionicons name="add-circle-outline" size={15} color="black" />} {iscreate ? 'Cancel' : 'ADD'}</Text></Pressable>
-            {
+        return (
+            <View style={styles.container}>
 
-                iscreate ? <AddExpense />
-                    :
-                    <View style={styles.expense}>
-                        {
-                            expenses.map((item, index) => {
-                                return (
-                                    <Expenses key={index} expensedata={item} />
-                                )
+                <View style={{ paddingLeft: 10, marginBottom: 10, display: 'flex', flexDirection: 'row' }}>
+                    <Text style={{ fontSize: 18 }}>Members : </Text>
+                    <Text style={{ fontWeight: 'bold', top: 3, marginLeft: 5 }}>You,{current_group_members.join(',')}</Text></View>
 
-                            })
-                        }
+                <View style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Pressable style={styles.addbutton} onPress={() => Setaddingfriend(true)} ><Text style={styles.addtext}>{iscreate ? null : <AntDesign name="user" size={15} color="black" />} Add Friend</Text></Pressable>
+                    <Pressable style={styles.addbutton} onPress={() => Setiscreate(!iscreate)} ><Text style={styles.addtext}>{iscreate ? null : <Ionicons name="add-circle-outline" size={15} color="black" />} {iscreate ? 'Cancel' : 'ADD Expense'}</Text></Pressable>
+                </View>
 
-                    </View>
-            }
-            {
 
-                iscreate ? null :
-                    <View style={styles.group_balance}>
-                        <GroupBalance navigation={navigation} />
-                    </View>
-            }
+                {
 
-        </View>
-    )
+                    iscreate ? <AddExpense />
+                        :
+                        <View style={styles.expense}>
+                            {
+                                expenses.map((item, index) => {
+                                    return (
+                                        <Expenses key={index} expensedata={item} />
+                                    )
+
+                                })
+                            }
+
+                        </View>
+                }
+                {
+
+                    iscreate ? null :
+                        <View style={styles.group_balance}>
+                            <GroupBalance navigation={navigation} />
+                        </View>
+                }
+
+            </View>
+        )
 }
 
 const styles = StyleSheet.create({
@@ -185,9 +216,9 @@ const styles = StyleSheet.create({
     addbutton: {
         backgroundColor: '#FBA4A4',
         borderRadius: 50,
-
-        paddingHorizontal: 5,
-        width: '30%',
+        height: 30,
+        justifyContent: 'center',
+        paddingHorizontal: 15,
         fontSize: 12,
         alignItems: 'center',
         alignSelf: 'flex-end',
@@ -197,7 +228,8 @@ const styles = StyleSheet.create({
     addtext: {
         color: 'white',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        fontWeight: 'bold'
     }
 })
 

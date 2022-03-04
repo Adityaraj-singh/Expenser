@@ -2,32 +2,24 @@ import React from "react";
 import { StyleSheet, Text, Pressable, View, TextInput, FlatList } from 'react-native';
 
 import { FontAwesome } from '@expo/vector-icons';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { Searchbar } from 'react-native-paper';
 import AddFriend from "./Addfriends";
-
+import { useSelector, useDispatch } from "react-redux";
 const FriendList = () => {
+    const state = useSelector(state => state.FriendsReducer)
     const [search, Setsearch] = useState('')
     const [addvisible, Setvisible] = useState(false)
-    const [friends, Setfriends] = useState([
+    const [friends, Setfriends] = useState(state)
+    console.log('frinedss')
+    console.log(state)
 
-        {
-            id: 0,
-            name: 'Gagan'
-        },
-        {
-            id: 1,
-            name: 'karan'
-        },
-        {
-            id: 2,
-            name: 'Chris'
-        }
-    ])
-
+    useEffect(() => {
+        Setfriends(state)
+    }, [state])
     const Item = ({ title }) => (
         <View style={styles.item}>
             <View>
@@ -99,14 +91,14 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
 
         paddingHorizontal: 5,
-        borderRadius: 30,
+        borderRadius: 10,
         elevation: 3,
         height: 30,
         backgroundColor: '#2F80ED',
     },
     text: {
 
-
+        paddingHorizontal: 10,
         fontWeight: 'bold',
         color: 'white',
     },

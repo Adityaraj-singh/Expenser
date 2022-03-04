@@ -47,7 +47,7 @@ const GroupsListstack = () => {
         })} >
             <Stack.Screen name="Groupstack" component={GroupList} />
             <Stack.Screen name="GroupDetail" title="GroupDetail" component={GroupDetail} />
-            <Stack.Screen name="Payment" title="GroupDetail" component={Payment} />
+            <Stack.Screen name="Payment" title="Payment" component={Payment} />
 
 
 

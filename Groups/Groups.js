@@ -11,40 +11,36 @@ import GroupDetail from "./GroupDetail";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
-const groups = [{
-    id: 0,
-    Name: 'Lunch',
-    Desc: 'adaadaada'
-
-},
-
-{
-    id: 1,
-    Name: 'Kasol Trip',
-    Desc: 'asasas'
-}
-]
+const groups = []
 const GroupList = ({ navigation }) => {
     const dispatch = useDispatch()
-    const state = useSelector(state => state)
-    console.log(state)
+
+    const groups = useSelector(state => state.GroupReducer)
+    // console.log('groupss')
+    //  console.log(groups)
 
     function Loguerout() {
         console.log('working')
         dispatch({ type: 'Signout' })
         console.log(state)
     }
-    function Selectgroups(id) {
+
+
+
+    function Selectgroups(id, name) {
         setSelectedId(id)
 
         Setselectedgroup(id)
 
-        navigation.navigate('GroupDetail')
+        navigation.navigate('GroupDetail', {
+            GroupId: id,
+            groupName: name
+        })
     }
     const [selectedgroup, Setselectedgroup] = useState(false)
     const Item = ({ item, onPress, backgroundColor, textColor }) => (
         <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-            <Text style={[styles.Name, textColor]}> <FontAwesome5 name="users" size={20} color="green" /> {item.Name}</Text>
+            <Text style={[styles.Name, textColor]}> <FontAwesome5 name="users" size={20} color="green" /> {item.groupName}</Text>
             <Text style={styles.grp_notification}>
                 1
             </Text>
@@ -53,13 +49,13 @@ const GroupList = ({ navigation }) => {
 
     const [create, Setcreate] = useState(false)
     const renderItem = ({ item }) => {
-        const backgroundColor = item.id === selectedId ? "#6FCF97" : "green";
-        const color = item.id === selectedId ? 'white' : 'black';
+        const backgroundColor = "#6FCF97";
+        const color = 'white';
 
         return (
             <Item
                 item={item}
-                onPress={() => Selectgroups(item.id)}
+                onPress={() => Selectgroups(item.groupid, item.groupName)}
                 backgroundColor={{ backgroundColor }}
                 textColor={{ color }}
             />
@@ -80,7 +76,7 @@ const GroupList = ({ navigation }) => {
 
                         <View style={{ marginBottom: 30 }}>
 
-                            <NewGroup />
+                            <NewGroup Setcreate={Setcreate} />
                         </View>
                         : null}
                 </View>

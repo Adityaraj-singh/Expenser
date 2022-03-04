@@ -23,7 +23,7 @@ const DropDown = ({ transactions }) => {
         <View style={styles.detail}>
             {transactions.map((item, index) => {
                 return (
-                    <View style={styles.card}>
+                    <View style={styles.card} key={index}>
                         <View style={{ width: '30%', alignItems: 'flex-start' }}>
                             <Text style={{ fontSize: 12 }}><FontAwesome name="user" size={15} color="green" /> {item.ower}</Text>
                         </View>

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FlatList, StyleSheet, ScrollView, Text, Pressable, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
+import { FlatList, StyleSheet, Button, Text, Pressable, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { exp } from "react-native/Libraries/Animated/Easing";
@@ -19,14 +19,7 @@ const AddExpense = () => {
             name: 'Girish'
         },
 
-        {
-            id: 69,
-            name: 'Kritesh'
-        },
-        {
-            id: 48,
-            name: 'henry'
-        },
+
         {
             id: 96,
             name: 'peter'
@@ -46,11 +39,7 @@ const AddExpense = () => {
 
     },
 
-    {
-        id: 2,
-        name: 'Karan',
 
-    }
     ]
 
     const [array, Setarray] = useState(participants)
@@ -59,25 +48,44 @@ const AddExpense = () => {
 
     function remove(id) {
         let hp = array
-        let temparray = hp.filter((item) => item.id == id)
-        console.log('hitted')
+        let temparray = hp.filter((item) => item.id !== id)
+
         Setarray(temparray)
+        // console.log('removed')
+        //adding in friends list
+        let temp2 = array.filter((item) => item.id == id)
+
+        temp2 = friends.concat(temp2)
+        // console.log([...temp2], temp2)
+        Setfriends([...temp2])
+
+
     }
 
     function add(id) {
-
         let temparray1 = friends
         let temparray2 = temparray1.filter(item => item.id == id)
         try {
-            let pp = array.concat(temparray2)
-            console.log('hitter')
-            Setarray(pp)
+            //adding  friend in participants
+            //  let pp = array.concat(temparray2)
+            //  console.log('adding')
+            let temp = friends
+            //removing from friends array
+            temp = temp.filter(item => item.id !== id)
+            Setfriends([...temp])
+            Setarray((prev) => prev.concat(temparray2))
         }
         catch (err) {
             alert(err)
         }
 
     }
+
+
+    useEffect(() => {
+        console.log('Participants', array)
+        console.log('Friends', friends)
+    }, [array, friends])
     useEffect(() => {
         let temp = parseInt(amount) / parseInt(array.length)
         console.log(temp + ' divided')
@@ -86,15 +94,21 @@ const AddExpense = () => {
     const Item1 = ({ item, onPress, backgroundColor, textColor }) => (
         <View onPress={onPress} style={[styles.item, backgroundColor]}>
             <Text style={[styles.Name, textColor]}> {item.name}</Text>
-            {isSwitchOn ? <TextInput style={styles.amount} keyboardType="numeric" value={dividedamt.toString()} /> : <TextInput style={styles.amount} value={'decided'} />}
-            <Text> <AntDesign name="minus" size={20} color="white" id={item.id} onPress={() => remove(item.id)} /> </Text>
+            {isSwitchOn ? <TextInput style={styles.amount} keyboardType="numeric" value={dividedamt.toString()} /> : <TextInput style={styles.amount} placeholder="amount" />}
+            <Pressable onPress={() => remove(item.id)} >
+                <Text> <AntDesign name="minus" size={20} color="white" id={item.id} /> </Text>
+            </Pressable>
+
         </View>
     );
     const Item2 = ({ item, onPress, backgroundColor, textColor }) => (
         <View onPress={onPress} style={[styles.item, backgroundColor]}>
             <Text style={[styles.Name, textColor]}> {item.name}</Text>
+            <Pressable onPress={() => add(item.id)}  >
 
-            <Text> <AntDesign name="pluscircleo" size={24} color="white" onPress={() => add(item.id)} /> </Text>
+
+                <Text> <AntDesign name="pluscircleo" size={24} color="white" /> </Text>
+            </Pressable>
         </View>
     );
 
@@ -233,8 +247,8 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         backgroundColor: 'white',
         width: '40%',
-        paddingHorizontal: 5,
-        paddingHorizontal: 5
+        paddingLeft: 15,
+        paddingBottom: 2
     },
     item: {
         padding: 5,
@@ -284,7 +298,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         overflow: 'scroll',
 
-        height: null,
+        height: 800,
     },
     shadowProp: {
         shadowColor: '#000',

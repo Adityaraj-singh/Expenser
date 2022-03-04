@@ -15,6 +15,7 @@ const Login = ({ Setsignup, Setuser }) => {
     const [error, Seterror] = useState('')
 
     async function Login() {
+        console.log('asas')
         if (!username || !password) {
             Seterror('Please fill both fields')
         }
