@@ -10,12 +10,13 @@ const Signup = ({ Setsignup }) => {
     const dispatch = useDispatch()
     async function Authenticate() {
         if (username.length > 0 && password.length > 0 && !emailerror && !passwrror) {
+            console.log('adad')
             let data = {
                 username: username,
                 password: password
             }
             const response = await Signupapi(data)
-
+            console.log(response)
             if (JSON.stringify(response.success) == 'true') {
                 console.log('frontend-response')
 

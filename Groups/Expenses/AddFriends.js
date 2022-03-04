@@ -14,6 +14,8 @@ const AddFriendsToGroup = (props) => {
     var CurrentGroup = useSelector(state => state.GroupReducer)
     const [error, Seterror] = useState('')
     const [success, Setsuccess] = useState('')
+    //  console.log('propingg')
+    // console.log(props)
     //  console.log('currentgroup')
     CurrentGroup = CurrentGroup.filter(item => {
         if (item.groupid == groupid) {
@@ -83,6 +85,15 @@ const AddFriendsToGroup = (props) => {
                 keyExtractor={(item) => item.id}
                 extraData={selectedId}
             />
+
+
+            <Pressable style={styles.Button} onPress={() => props.Setaddingfriend(false)}>
+                <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'white' }}>
+                    Submit
+
+                </Text>
+            </Pressable>
+
         </View>
     )
 
@@ -90,6 +101,16 @@ const AddFriendsToGroup = (props) => {
 }
 
 const styles = StyleSheet.create({
+    Button: {
+        width: '50%',
+        backgroundColor: '#2F80ED',
+        borderRadius: 50,
+        paddingTop: 10,
+        paddingBottom: 10,
+        alignItems: 'center',
+        alignSelf: 'center',
+        fontWeight: 'bold'
+    },
     item: {
         padding: 10,
         marginVertical: 8,
@@ -117,7 +138,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         overflow: 'scroll',
 
-        height: 400,
+        height: 'auto',
     },
     shadowProp: {
         shadowColor: '#000',

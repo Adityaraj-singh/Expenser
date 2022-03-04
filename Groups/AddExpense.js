@@ -4,26 +4,36 @@ import { FlatList, StyleSheet, Button, Text, Pressable, ImageBackground, Touchab
 import { FontAwesome5 } from '@expo/vector-icons';
 import { exp } from "react-native/Libraries/Animated/Easing";
 import { useState } from "react";
-import { Provider as PaperProvider } from 'react-native-paper';
+
 import { Switch } from 'react-native-paper';
 import { AntDesign } from "@expo/vector-icons";
-const AddExpense = () => {
+import { useSelector, useDispatch } from "react-redux";
+import { LogBox } from 'react-native';
+import { Dropdown } from 'react-native-material-dropdown';
+const AddExpense = ({ route, navigation }) => {
 
+    const { GroupId, groupName, current_group_members } = route.params
     const [isSwitchOn, setIsSwitchOn] = useState(true);
     const [selectedId, setSelectedId] = useState(null);
     const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
     const [amount, Setamount] = useState(0)
-    const friendsarray = [
-        {
-            id: 68,
-            name: 'Girish'
-        },
-
-
-        {
-            id: 96,
-            name: 'peter'
+    const [expensename, Setexpensename] = useState('')
+    const dispatch = useDispatch()
+    const states = useSelector(state => state.ExpenseReducer)
+    const [owner, Setowner] = useState('')
+    const currentGroupExpenses = states.filter(item => {
+        if (item.groupId == GroupId) {
+            return item
         }
+    })
+    //  console.log('checkinh state')
+    //  console.log(current_group_members)
+
+    const data = current_group_members.map(item => {
+        return { value: item }
+    })
+    const friendsarray = [
+
 
     ]
     var participants = [{
@@ -42,10 +52,10 @@ const AddExpense = () => {
 
     ]
 
-    const [array, Setarray] = useState(participants)
+    const [array, Setarray] = useState(current_group_members.map((item, index) => { return { id: index, name: item } }))
     const [friends, Setfriends] = useState(friendsarray)
     const [dividedamt, Setdividedamt] = useState(0)
-
+    const [error, Seterror] = useState('')
     function remove(id) {
         let hp = array
         let temparray = hp.filter((item) => item.id !== id)
@@ -81,21 +91,60 @@ const AddExpense = () => {
 
     }
 
+    function addexpense() {
+        if (amount <= 0) {
+            Seterror('Invalid Amount')
+            setTimeout(() => {
+                Seterror('')
+            }, 1500)
+        }
+
+        else if (!expensename) {
+            Seterror('Please enter Expense name')
+            setTimeout(() => {
+                Seterror('')
+            }, 1500)
+        }
+        else {
+
+            dispatch({
+                type: 'ADDEXPENSE',
+                payload: {
+                    value: {
+                        id: currentGroupExpenses.length + 1,
+                        groupId: GroupId,
+                        month: 'Jan',
+                        date: '4',
+                        name: expensename,
+                        amount: amount,
+                        owner: owner,
+                        transactions: array.map((item, index) => {
+                            return {
+                                ower: item.name,
+                                amount: parseInt(dividedamt),
+                                lender: owner
+                            }
+                        }),
+                    }
+                }
+            })
+
+            console.log(currentGroupExpenses)
+
+        }
+
+    }
 
     useEffect(() => {
-        console.log('Participants', array)
-        console.log('Friends', friends)
-    }, [array, friends])
-    useEffect(() => {
         let temp = parseInt(amount) / parseInt(array.length)
-        console.log(temp + ' divided')
+        // console.log(temp + ' divided')
         Setdividedamt(temp.toFixed(2))
     }, [amount])
     const Item1 = ({ item, onPress, backgroundColor, textColor }) => (
         <View onPress={onPress} style={[styles.item, backgroundColor]}>
-            <Text style={[styles.Name, textColor]}> {item.name}</Text>
+            <Text style={{ marginTop: 4 }}> {item.name}</Text>
             {isSwitchOn ? <TextInput style={styles.amount} keyboardType="numeric" value={dividedamt.toString()} /> : <TextInput style={styles.amount} placeholder="amount" />}
-            <Pressable onPress={() => remove(item.id)} >
+            <Pressable style={{ marginTop: 3, borderColor: 'white', borderWidth: 2, borderRadius: 50, marginRight: 5 }} onPress={() => remove(item.id)} >
                 <Text> <AntDesign name="minus" size={20} color="white" id={item.id} /> </Text>
             </Pressable>
 
@@ -113,7 +162,10 @@ const AddExpense = () => {
     );
 
 
+    useEffect(() => {
 
+        LogBox.ignoreLogs(['Animated: `useNativeDriver`', 'componentWillReceiveProps', 'componentWillUpdate']);
+    }, [])
     const renderItem1 = ({ item }) => {
         const backgroundColor = "#6FCF97";
         const color = item.id === selectedId ? 'white' : 'black';
@@ -146,14 +198,14 @@ const AddExpense = () => {
 
 
             <View style={[styles.card, styles.shadowProp]}  >
-                <Text style={styles.heading}>  Expense  Details {amount}</Text>
+                <Text style={styles.heading}>  Expense  Add to {groupName}</Text>
                 <View style={styles.inner_card}>
                     <View style={{ marginBottom: 10 }}>
                         <Text style={styles.heading2}>  Expense  Name</Text>
                         <TextInput
                             style={styles.input}
 
-                            value={'Pizza'}
+                            onChangeText={(text) => Setexpensename(text)}
                             placeholder="useless placeholder"
                         />
                     </View>
@@ -169,6 +221,11 @@ const AddExpense = () => {
 
                         />
                     </View>
+                    <Dropdown
+                        label='Select Owner'
+                        data={data}
+                        onChangeText={(text) => Setowner(text)}
+                    />
                     <Text style={styles.heading2}> Participants</Text>
                     <View style={styles.participants}>
                         <View style={{ display: 'flex', flexDirection: 'row', alignSelf: 'flex-end' }}>
@@ -200,9 +257,12 @@ const AddExpense = () => {
 
 
                 </View>
-                <Pressable style={styles.add} onPress={() => console.log('Presseddd')} >
+                <Pressable style={styles.add} onPress={addexpense} >
                     <Text style={styles.text}>{'Create/'}</Text>
                 </Pressable>
+                <View>
+                    <Text style={{ color: 'red', alignSelf: "center" }}>{error}</Text>
+                </View>
             </View>
 
         </View>
@@ -269,7 +329,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         shadowColor: 'black',
         shadowRadius: 10,
-        shadowOpacity: 20,
+
 
 
     },
@@ -279,7 +339,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 18,
         borderBottomWidth: 2,
         borderBottomColor: 'black',
     },
@@ -297,8 +357,8 @@ const styles = StyleSheet.create({
         width: '90%',
         alignSelf: 'center',
         overflow: 'scroll',
-
-        height: 800,
+        marginTop: 10,
+        height: 'auto',
     },
     shadowProp: {
         shadowColor: '#000',

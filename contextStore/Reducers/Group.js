@@ -27,7 +27,7 @@ const groups = [
     {
         groupid: 0,
         groupName: 'college friends',
-        members: []
+        members: ['Gagan']
     }
 
 ]

@@ -22,21 +22,26 @@ const DropDown = ({ transactions }) => {
     return (
         <View style={styles.detail}>
             {transactions.map((item, index) => {
-                return (
-                    <View style={styles.card} key={index}>
-                        <View style={{ width: '30%', alignItems: 'flex-start' }}>
-                            <Text style={{ fontSize: 12 }}><FontAwesome name="user" size={15} color="green" /> {item.ower}</Text>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '38%' }}>
-                            <Text style={styles.owes}>Owes</Text>
-                            <Text style={styles.amount}>{item.amount}</Text>
-                            <Text style={styles.to}>To</Text>
-                        </View>
+                console.log(item.lender, item.ower, item.lender !== item.ower)
+                return item.lender !== item.ower ?
+                    (
+
+                        <View style={styles.card} key={index}>
+                            <View style={{ width: '30%', alignItems: 'flex-start' }}>
+                                <Text style={{ fontSize: 14, fontWeight: 'bold' }}><FontAwesome name="user" size={15} color="green" /> {item.ower}</Text>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '38%' }}>
+                                <Text style={styles.owes}>Owes</Text>
+                                <Text style={styles.amount}>{item.amount}</Text>
+                                <Text style={styles.to}>To</Text>
+                            </View>
 
 
-                        <Text style={styles.user2}><FontAwesome name="user" size={15} color="green" /> {item.lender}</Text>
-                    </View>
-                )
+                            <Text style={styles.user2}><FontAwesome name="user" size={15} color="green" /> {item.lender}</Text>
+                        </View>
+                    )
+                    :
+                    null
 
             })}
         </View>
@@ -50,6 +55,7 @@ const styles = StyleSheet.create({
 
     },
     card: {
+        paddingHorizontal: 5,
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
@@ -64,7 +70,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         marginTop: 'auto',
         paddingVertical: 2,
-        fontSize: 12,
+        fontSize: 14,
         borderRadius: 10,
         fontWeight: 'bold',
 
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
         marginBottom: 'auto',
         marginTop: 'auto',
         paddingVertical: 2,
-        fontSize: 12,
+        fontSize: 14,
         borderRadius: 10,
         fontWeight: 'bold',
     },
@@ -85,14 +91,15 @@ const styles = StyleSheet.create({
         marginBottom: 'auto',
         marginTop: 'auto',
         paddingVertical: 2,
-        fontSize: 12,
+        fontSize: 14,
         borderRadius: 10,
         fontWeight: 'bold',
         alignContent: 'center',
 
     },
     user2: {
-        fontSize: 12,
+        fontWeight: 'bold',
+        fontSize: 14,
         marginTop: 'auto',
         marginBottom: 'auto'
     }

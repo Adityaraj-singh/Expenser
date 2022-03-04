@@ -20,7 +20,11 @@ const Expenses = ({ key, expensedata, navigation }) => {
                         <Text style={{ color: 'white', borderBottomColor: 'white', borderBottomWidth: 2 }}>{data.month}</Text>
                         <Text style={{ color: 'white' }}>{data.date}</Text>
                     </View>
-                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white' }}>{data.name}</Text>
+                    <View style={{ width: '80%', marginLeft: 10 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white' }}>{data.name}</Text>
+                    </View>
+
+
                 </View>
 
 
@@ -50,27 +54,27 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 5,
-        paddingHorizontal: 2,
+        paddingLeft: 5,
         marginTop: 5
     },
     left: {
-        width: '40%',
+        width: '50%',
 
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-around'
     },
     right: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginRight: 20,
-        width: '40%',
+        width: '50%',
     },
     times: {
         display: 'flex',
         flexDirection: 'column',
-
+        marginRight: 10,
     },
     amount: {
         height: '80%',

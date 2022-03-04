@@ -24,7 +24,7 @@ const AddFriend = ({ Setvisible }) => {
             }
 
         })
-        console.log('added')
+        //   console.log('added')
     }
     return (
 

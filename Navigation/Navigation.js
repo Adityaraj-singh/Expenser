@@ -17,6 +17,7 @@ import Payment from '../Groups/Expenses/Payment';
 import AddFriend from '../Friends/Addfriends';
 import FriendList from '../Friends/FriendsList';
 import { useSelector } from 'react-redux';
+import AddExpense from '../Groups/AddExpense';
 
 
 
@@ -48,6 +49,7 @@ const GroupsListstack = () => {
             <Stack.Screen name="Groupstack" component={GroupList} />
             <Stack.Screen name="GroupDetail" title="GroupDetail" component={GroupDetail} />
             <Stack.Screen name="Payment" title="Payment" component={Payment} />
+            <Stack.Screen name="AddExpense" title="Payment" component={AddExpense} />
 
 
 

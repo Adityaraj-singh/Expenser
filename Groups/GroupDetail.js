@@ -17,56 +17,23 @@ const GroupDetail = ({ route, navigation }) => {
     const [iscreate, Setiscreate] = useState(false)
     const [statement, Setstatement] = useState([])
     const [addingfriend, Setaddingfriend] = useState(false)
-    const { groupname, GroupId } = route.params
+    const { groupName, GroupId } = route.params
+
     const state = useSelector(state => state.GroupReducer)
+    const allExpenses = useSelector(state => state.ExpenseReducer)
+    const expenses = allExpenses.filter((item) => {
+        if (item.groupId == GroupId) {
+            return item
+        }
+    })
     const current_group = state.filter(item => {
         if (item.groupid == GroupId)
             return item
     })
 
     const current_group_members = current_group[0].members
-    console.log('memberingg')
-    console.log(current_group_members)
-    const expenses = [{
-        id: 0,
-        month: 'Feb',
-        date: ' 28',
-        name: "Pizza",
-        amount: 750,
-        owner: "Karanveer",
-        transactions: [
-            {
-                ower: "Gagan",
-                amount: 300,
-                lender: "Karanveer",
-            },
-            {
-                ower: "Aditya Raj",
-                amount: 300,
-                lender: "Karanveer",
-            },
-        ],
-    },
-    {
-        id: 1,
-        month: 'MARCH',
-        date: ' 28',
-        name: "mOMOS",
-        amount: 750,
-        owner: "Gagan",
-        transactions: [
-            {
-                ower: "Aditya raj",
-                amount: 300,
-                lender: "Gagan",
-            },
-            {
-                ower: "Karanveer",
-                amount: 300,
-                lender: "Gagan",
-            },
-        ],
-    }]
+    //console.log('memberingg')
+    // console.log(current_group_members)
 
     useEffect(() => {
         //     console.log('grp detail')
@@ -74,20 +41,14 @@ const GroupDetail = ({ route, navigation }) => {
         var PMS = PMS || {}
 
         PMS.GroupBalanceData = PMS.GroupBalanceData || {};
-        PMS.GroupBalanceData.members = [
-            {
-                name: "Aditya Raj",
-                accounts: [],
-            },
-            {
-                name: "Gagan",
-                accounts: [],
-            },
-            {
-                name: "Karanveer",
-                accounts: [],
-            },
-        ];
+
+        PMS.GroupBalanceData.members = current_group_members.map((item) => {
+            return {
+                name: item,
+                accounts: []
+            }
+        });
+        //  console.log('statemenbtsss', PMS.GroupBalanceData.members)
         expenses.forEach((elm) => {
             PMS.GroupBalanceData.members.forEach((member) => {
                 if (elm.owner !== member.name) {
@@ -147,13 +108,18 @@ const GroupDetail = ({ route, navigation }) => {
                 });
             });
         });
-        //    console.log(PMS.GroupBalanceStatement)
+        // console.log('FInal statement')
+        //   console.log(PMS.GroupBalanceStatement)
         Setstatement(PMS.GroupBalanceStatement)
-    }, [])
+    }, [allExpenses])
 
+    useEffect(() => {
+        console.log('finals statement')
+        console.log(statement)
+    })
     if (addingfriend) {
         return (
-            <AddFriendsToGroup navigation={navigation} addingfriend={addingfriend} Setaddingfriend={Setaddingfriend} groupname={route.params.groupName} groupid={route.params.GroupId} />
+            <AddFriendsToGroup Setaddingfriend={Setaddingfriend} navigation={navigation} addingfriend={addingfriend} Setaddingfriend={Setaddingfriend} groupname={route.params.groupName} groupid={route.params.GroupId} />
         )
     }
     else
@@ -163,11 +129,15 @@ const GroupDetail = ({ route, navigation }) => {
 
                 <View style={{ paddingLeft: 10, marginBottom: 10, display: 'flex', flexDirection: 'row' }}>
                     <Text style={{ fontSize: 18 }}>Members : </Text>
-                    <Text style={{ fontWeight: 'bold', top: 3, marginLeft: 5 }}>You,{current_group_members.join(',')}</Text></View>
+                    <Text style={{ fontWeight: 'bold', top: 3, marginLeft: 5 }}>{current_group_members.join(',')}</Text></View>
 
                 <View style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Pressable style={styles.addbutton} onPress={() => Setaddingfriend(true)} ><Text style={styles.addtext}>{iscreate ? null : <AntDesign name="user" size={15} color="black" />} Add Friend</Text></Pressable>
-                    <Pressable style={styles.addbutton} onPress={() => Setiscreate(!iscreate)} ><Text style={styles.addtext}>{iscreate ? null : <Ionicons name="add-circle-outline" size={15} color="black" />} {iscreate ? 'Cancel' : 'ADD Expense'}</Text></Pressable>
+                    <Pressable style={styles.addbutton} onPress={() => navigation.navigate('AddExpense', {
+                        GroupId,
+                        groupName,
+                        current_group_members
+                    })} ><Text style={styles.addtext}>{iscreate ? null : <Ionicons name="add-circle-outline" size={15} color="black" />} {iscreate ? 'Cancel' : 'ADD Expense'}</Text></Pressable>
                 </View>
 
 
@@ -177,12 +147,16 @@ const GroupDetail = ({ route, navigation }) => {
                         :
                         <View style={styles.expense}>
                             {
-                                expenses.map((item, index) => {
-                                    return (
-                                        <Expenses key={index} expensedata={item} />
-                                    )
+                                expenses.length !== 0 ?
 
-                                })
+                                    expenses.map((item, index) => {
+                                        return (
+                                            <Expenses key={index} expensedata={item} />
+                                        )
+
+                                    })
+                                    :
+                                    <Text style={{ fontSize: 24, fontWeight: 'bold', alignSelf: 'center' }}>No Epxense yet</Text>
                             }
 
                         </View>
@@ -191,7 +165,7 @@ const GroupDetail = ({ route, navigation }) => {
 
                     iscreate ? null :
                         <View style={styles.group_balance}>
-                            <GroupBalance navigation={navigation} />
+                            <GroupBalance data={statement} navigation={navigation} />
                         </View>
                 }
 
@@ -201,14 +175,15 @@ const GroupDetail = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
     group_balance: {
-        position: 'absolute',
-        bottom: 100,
+        marginTop: 10,
+        position: 'relative',
+        bottom: 0,
         width: '90%',
         alignSelf: 'center'
     },
     container: {
         position: 'relative',
-        top: 50,
+        top: 10,
         height: '100%',
         width: '100%',
 

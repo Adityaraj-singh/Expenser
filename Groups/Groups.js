@@ -22,7 +22,7 @@ const GroupList = ({ navigation }) => {
     function Loguerout() {
         console.log('working')
         dispatch({ type: 'Signout' })
-        console.log(state)
+        // console.log(state)
     }
 
 
@@ -97,7 +97,7 @@ const GroupList = ({ navigation }) => {
 
         <View style={styles.container}>
             <GroupList2 />
-            <Pressable onPress={Loguerout} style={{ backgroundColor: 'red', paddingHorizontal: 5, paddingVertical: 5 }}>
+            <Pressable style={styles.add} onPress={Loguerout} >
                 <Text>Logout</Text>
             </Pressable>
         </View>
@@ -107,6 +107,18 @@ const GroupList = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    add: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 0,
+        paddingHorizontal: 0,
+        height: 40,
+        width: '50%',
+        alignSelf: 'center',
+        borderRadius: 30,
+        elevation: 3,
+        backgroundColor: '#2F80ED',
+    },
     grp_notification: {
         fontSize: 18,
         borderRadius: 100,

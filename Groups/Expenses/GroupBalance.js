@@ -6,35 +6,58 @@ import { useState } from "react";
 import DropDown from "./Dropdown";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const GroupBalance = ({ navigation }) => {
+const GroupBalance = ({ data, navigation }) => {
 
-    return (
-        <View style={styles.card}>
-            <View style={styles.heading}>
-                <Text style={{ color: 'white', fontWeight: 'bold' }}>Group Balance</Text>
-            </View>
-            <View style={styles.footer}>
-                <View style={styles.row} >
-                    <View style={styles.lefts}>
-                        <Text style={{ fontSize: 12 }}><FontAwesome name="user" size={12} color="green" /> You </Text>
-                    </View>
-                    <View style={styles.middle}>
-                        <Text style={styles.owes}>Owes</Text>
-                        <Text style={styles.amount}> 200</Text>
-                        <Text style={styles.to}>To</Text>
-                    </View>
-                    <View style={{ fontSize: 11 }}>
-                        <Text>Karanveer</Text>
-                    </View>
+
+
+    if (data && data.length > 0) {
+        return (
+            <View style={styles.card}>
+                <View style={styles.heading}>
+                    <Text style={{ color: 'white', fontWeight: 'bold', left: 4, fontSize: 24 }}>Group Balance</Text>
                 </View>
-                <TouchableOpacity style={styles.settle} onPress={() => navigation.navigate('Payment')}>
-                    <Text style={styles.text}>
-                        Settle
-                    </Text>
-                </TouchableOpacity>
+                <View style={styles.footer}>
+                    {
+                        data.map((item, index) => {
+                            return (
+                                <View key={index} style={styles.row} >
+                                    <View style={styles.lefts}>
+                                        <Text style={{ fontSize: 12, fontWeight: 'bold' }}><FontAwesome name="user" size={12} color="green" /> {item.ower} </Text>
+                                    </View>
+                                    <View style={styles.middle}>
+                                        <Text style={styles.owes}>Owes</Text>
+                                        <Text style={styles.amount}> {item.amount}</Text>
+                                        <Text style={styles.to}>To</Text>
+                                    </View>
+                                    <View style={{ fontSize: 11 }}>
+                                        <Text>{item.lender}</Text>
+                                    </View>
+                                </View>
+                            )
+                        })
+                    }
+
+                    <TouchableOpacity style={styles.settle} onPress={() => navigation.navigate('Payment')}>
+                        <Text style={styles.text}>
+                            Settle
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    )
+        )
+    }
+    else {
+        return (
+            <View style={styles.card}>
+                <View style={styles.heading}>
+                    <Text style={{ color: 'white', fontWeight: 'bold', left: 4, fontSize: 24 }}>Nothing to show</Text>
+                </View>
+
+
+            </View>
+        )
+    }
+
 
 }
 const styles = StyleSheet.create({
@@ -57,12 +80,16 @@ const styles = StyleSheet.create({
     },
     lefts: {
         marginBottom: 'auto',
-        marginTop: 'auto'
+        marginTop: 'auto',
+        width: '30%',
+
     },
     heading: {
         height: 40,
         backgroundColor: '#6FCF97',
         width: '100%',
+        borderBottomWidth: 1,
+        borderBottomColor: 'black'
 
     },
     card: {
@@ -80,10 +107,11 @@ const styles = StyleSheet.create({
     row: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
         borderBottomColor: 'black',
         borderBottomWidth: 1,
-        paddingVertical: 2
+        paddingVertical: 2,
+        marginTop: 5
     },
     middle: {
         width: '40%',

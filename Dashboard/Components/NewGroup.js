@@ -9,6 +9,8 @@ import { useState } from "react";
 const NewGroup = ({ Setcreate }) => {
     const [groupname, Setgroupname] = useState('')
     const groups = useSelector(state => state.GroupReducer).length
+    const currentuser = useSelector(state => state.userReducer)
+
     const [error, Seterror] = useState('')
     //console.log(groups)
     const dispatch = useDispatch()
@@ -20,7 +22,7 @@ const NewGroup = ({ Setcreate }) => {
                     value: {
                         groupid: groups + 1,
                         groupName: groupname,
-                        members: []
+                        members: [currentuser.username]
                     }
                 }
             })
