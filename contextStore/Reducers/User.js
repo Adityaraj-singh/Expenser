@@ -2,7 +2,7 @@
 const userdetail = {
     id: 0,
     username: '',
-    email: '',
+    resource_uri: '',
 
 }
 
@@ -13,7 +13,7 @@ export default userReducer = (state = userdetail, action) => {
             return {
                 token: action.payload.value.id,
                 username: action.payload.value.username,
-
+                resource_uri: action.payload.value.resource_uri
             }
 
         case 'Signout': {

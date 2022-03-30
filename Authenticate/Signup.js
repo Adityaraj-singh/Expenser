@@ -18,9 +18,6 @@ const Signup = ({ Setsignup }) => {
             const response = await Signupapi(data)
             console.log(response)
             if (JSON.stringify(response.success) == 'true') {
-                console.log('frontend-response')
-
-                console.log(response.success)
                 dispatch({
                     type: 'Authenticate',
                     payload: {

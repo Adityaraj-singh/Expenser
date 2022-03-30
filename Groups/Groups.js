@@ -1,31 +1,39 @@
-import React from "react";
 import { FlatList, StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
 
 import { FontAwesome5 } from '@expo/vector-icons';
 import { exp } from "react-native/Libraries/Animated/Easing";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+
 import NewGroup from "../Dashboard/Components/NewGroup";
 import GroupDetail from "./GroupDetail";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { useSelector, useDispatch } from "react-redux";
+import { GetGroups } from "../API/GetGroups";
+import React, { useEffect, useState } from 'react'
 const groups = []
 const GroupList = ({ navigation }) => {
     const dispatch = useDispatch()
 
-    const groups = useSelector(state => state.GroupReducer)
+
+    const currentuser = useSelector(state => state.userReducer)
     // console.log('groupss')
     //  console.log(groups)
-
+    const [groups, Setgroups] = useState([])
     function Loguerout() {
         console.log('working')
         dispatch({ type: 'Signout' })
         // console.log(state)
     }
 
+    useEffect(async () => {
 
+        const res = await GetGroups({ username: currentuser.username, token: currentuser.token })
+        console.log('in grouos')
+        console.log(res.objects)
+        Setgroups(res.objects)
+    }, [])
 
     function Selectgroups(id, name) {
         setSelectedId(id)
@@ -40,7 +48,7 @@ const GroupList = ({ navigation }) => {
     const [selectedgroup, Setselectedgroup] = useState(false)
     const Item = ({ item, onPress, backgroundColor, textColor }) => (
         <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
-            <Text style={[styles.Name, textColor]}> <FontAwesome5 name="users" size={20} color="green" /> {item.groupName}</Text>
+            <Text style={[styles.Name, textColor]}> <FontAwesome5 name="users" size={20} color="green" /> {item.name}</Text>
             <Text style={styles.grp_notification}>
                 1
             </Text>
@@ -55,7 +63,7 @@ const GroupList = ({ navigation }) => {
         return (
             <Item
                 item={item}
-                onPress={() => Selectgroups(item.groupid, item.groupName)}
+                onPress={() => Selectgroups(item.id, item.name)}
                 backgroundColor={{ backgroundColor }}
                 textColor={{ color }}
             />

@@ -2,6 +2,7 @@ import { StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackground, Vie
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from 'react'
 import { Signinapi } from '../API/Authenticate';
+import { Getuser } from '../API/Getuser';
 const Login = ({ Setsignup, Setuser }) => {
 
     const credentials = {
@@ -15,23 +16,36 @@ const Login = ({ Setsignup, Setuser }) => {
     const [error, Seterror] = useState('')
 
     async function Login() {
-        console.log('asas')
+
         if (!username || !password) {
             Seterror('Please fill both fields')
         }
 
         else {
             const response = await Signinapi({ username, password })
+
+            console.log('responsee is')
+            console.log(response)
             if (JSON.stringify(response.success) == 'true') {
-                console.log('frontend-response')
+                // console.log('frontend-response')
 
                 console.log(response.success)
+
+
+                const gets = await Getuser({ username: response.username, token: response.token })
+                console.log('login me hi')
+                let dataTemp = gets.objects.filter((item) => {
+                    if (item.username == response.username) {
+                        return item
+                    }
+                })
                 dispatch({
                     type: 'Authenticate',
                     payload: {
                         value: {
                             id: response.token,
                             username: response.username,
+                            resource_uri: dataTemp.resource_uri
                         }
                     }
                 })

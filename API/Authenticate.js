@@ -4,7 +4,7 @@ export const Signupapi = async (data) => {
 
     // console.log(JSON.stringify(data))
     try {
-        const res = await fetch('http://192.168.1.8:8000/signup/', {
+        const res = await fetch('https://expenser-app-django-heroku.herokuapp.com/signup/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -16,6 +16,7 @@ export const Signupapi = async (data) => {
     }
 
     catch (err) {
+        console.log(err)
         return err
 
     }
@@ -23,13 +24,13 @@ export const Signupapi = async (data) => {
 
 
 }
+
+
 export const Signinapi = async (data) => {
-
-
 
     console.log(JSON.stringify(data))
     try {
-        const res = await fetch('http://192.168.1.5:8000/signin/', {
+        const res = await fetch('https://expenser-app-django-heroku.herokuapp.com/signin/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -47,6 +48,29 @@ export const Signinapi = async (data) => {
     }
 
 
+
+}
+
+export const AddProfile = (data) => {
+
+    console.log(JSON.stringify(data))
+    try {
+        const res = await fetch('https://expenser-app-django-heroku.herokuapp.com/profile/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        return res.json()
+    }
+
+    catch (err) {
+
+        return err
+
+    }
 
 }
 

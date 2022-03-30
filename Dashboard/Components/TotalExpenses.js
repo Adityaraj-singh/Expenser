@@ -16,35 +16,29 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { useState } from "react";
+import { GetGroups } from "../../API/GetGroups";
 
-const TotalExpenses = () => {
+const TotalExpenses = ({ state }) => {
     const [selectedId, setSelectedId] = useState(null);
 
-    const data = [
-        {
+    const [data, Setdata] = useState([])
 
-            id: 0,
-            name: 'COllege Friends',
-            Col1: 200,
-            Col2: 600
-        },
-        {
-            id: 1,
-            name: 'Wolf pack',
-            Col1: 500,
-            Col2: 100
-        }
-    ]
+    useEffect(async () => {
+        const resp = await GetGroups(state)
+        console.log(resp)
+        console.log('inside response')
+        Setdata(resp.objects)
 
+    }, [])
     const Item = ({ item, onPress, backgroundColor, textColor }) => (
         <TouchableOpacity onPress={onPress} style={[styles.item, backgroundColor]}>
             <Text style={[styles.Name, textColor]}>  {item.name}</Text>
             <View style={styles.amounts}>
                 <Text style={styles.col1}>
-                    {item.Col1}
+                    40
                 </Text>
                 <Text style={styles.Col2}>
-                    {item.Col2}
+                    50
                 </Text>
             </View>
 

@@ -8,18 +8,22 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 import { Searchbar } from 'react-native-paper';
 import AddFriend from "./Addfriends";
+import { Getuser } from "../API/Getuser";
 import { useSelector, useDispatch } from "react-redux";
 const FriendList = () => {
     const state = useSelector(state => state.FriendsReducer)
     const [search, Setsearch] = useState('')
     const [addvisible, Setvisible] = useState(false)
     const [friends, Setfriends] = useState(state)
-    console.log('frinedss')
-    console.log(state)
+    const currentuser = useSelector(state => state.userReducer)
+    const [allUsers, Setallusers] = useState([])
 
-    useEffect(() => {
-        Setfriends(state)
-    }, [state])
+    useEffect(async () => {
+        console.log('in friendsss')
+        const response = await Getuser({ username: currentuser.username, token: currentuser.token })
+        console.log(response.objects)
+        Setallusers(response.objects)
+    }, [])
     const Item = ({ title }) => (
         <View style={styles.item}>
             <View>
@@ -31,47 +35,52 @@ const FriendList = () => {
         </View>
     );
     const renderItem = ({ item }) => (
+
         <Item title={item.name} />
     );
 
-    return (
-        <View style={styles.container}>
-
-            <View style={[styles.card, styles.shadowProp]}  >
-                <Text style={styles.heading}>My Friends</Text>
-                <View style={styles.inner_card}>
-                    <Searchbar
-                        placeholder="Search"
-                        onChangeText={(text) => Setsearch(text)}
-                        value={search}
-                    />
-
-                    <FlatList
-                        data={friends}
-                        renderItem={renderItem}
-                        keyExtractor={item => item.id}
-                    />
-
+    if (addvisible)
+        return (
+            <View style={styles.container}>
+                <View style={{ marginTop: 10 }}>
+                    <AddFriend users={allUsers} Setvisible={Setvisible} />
                 </View>
-                {
-                    addvisible ? null :
-                        <Pressable style={styles.add} onPress={() => Setvisible(!addvisible)}>
-                            <Text style={styles.text}>Add Friend</Text>
-                        </Pressable>
-                }
 
             </View>
-            {
-                addvisible ?
-                    <View style={{ marginTop: 10 }}>
-                        <AddFriend Setvisible={Setvisible} />
-                    </View>
-                    :
-                    null
 
-            }
-        </View>
-    )
+        )
+    else
+        return (
+            <View style={styles.container}>
+
+                <View style={[styles.card, styles.shadowProp]}  >
+                    <Text style={styles.heading}>My Friends</Text>
+                    <View style={styles.inner_card}>
+                        <Searchbar
+                            placeholder="Search"
+                            onChangeText={(text) => Setsearch(text)}
+                            value={search}
+                        />
+
+                        <FlatList
+                            data={friends}
+                            renderItem={renderItem}
+                            keyExtractor={item => item.id}
+                        />
+
+                    </View>
+                    {
+                        addvisible ? null :
+                            <Pressable style={styles.add} onPress={() => Setvisible(!addvisible)}>
+                                <Text style={styles.text}>Add Friend</Text>
+                            </Pressable>
+                    }
+
+
+                </View>
+
+            </View>
+        )
 
 }
 

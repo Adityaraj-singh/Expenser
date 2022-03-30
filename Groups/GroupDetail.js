@@ -20,7 +20,7 @@ const GroupDetail = ({ route, navigation }) => {
     const { groupName, GroupId } = route.params
 
     const state = useSelector(state => state.GroupReducer)
-    const allExpenses = useSelector(state => state.ExpenseReducer)
+    const allExpenses = []
     const expenses = allExpenses.filter((item) => {
         if (item.groupId == GroupId) {
             return item
@@ -31,10 +31,10 @@ const GroupDetail = ({ route, navigation }) => {
             return item
     })
 
-    const current_group_members = current_group[0].members
+    const current_group_members = []
     //console.log('memberingg')
     // console.log(current_group_members)
-
+    /*
     useEffect(() => {
         //     console.log('grp detail')
         //  console.log(route.params)
@@ -112,14 +112,11 @@ const GroupDetail = ({ route, navigation }) => {
         //   console.log(PMS.GroupBalanceStatement)
         Setstatement(PMS.GroupBalanceStatement)
     }, [allExpenses])
+    */
 
-    useEffect(() => {
-        console.log('finals statement')
-        console.log(statement)
-    })
     if (addingfriend) {
         return (
-            <AddFriendsToGroup Setaddingfriend={Setaddingfriend} navigation={navigation} addingfriend={addingfriend} Setaddingfriend={Setaddingfriend} groupname={route.params.groupName} groupid={route.params.GroupId} />
+            <AddFriendsToGroup Setaddingfriend={Setaddingfriend} navigation={navigation} addingfriend={addingfriend} groupname={route.params.groupName} groupid={route.params.GroupId} />
         )
     }
     else
@@ -138,6 +135,7 @@ const GroupDetail = ({ route, navigation }) => {
                         groupName,
                         current_group_members
                     })} ><Text style={styles.addtext}>{iscreate ? null : <Ionicons name="add-circle-outline" size={15} color="black" />} {iscreate ? 'Cancel' : 'ADD Expense'}</Text></Pressable>
+
                 </View>
 
 
@@ -185,6 +183,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         top: 10,
         height: '100%',
+
         width: '100%',
 
     },

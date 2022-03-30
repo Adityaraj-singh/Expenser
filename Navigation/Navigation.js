@@ -58,6 +58,22 @@ const GroupsListstack = () => {
     )
 }
 
+const FriendStack = () => {
+
+    return (
+
+        <Stack.Navigator screenOptions={({ route }) => ({
+
+            headerTitle: () => <Text style={{ alignSelf: 'flex-end', width: '100%', fontSize: 24, color: 'white', fontWeight: 'bold' }}>Groups</Text>,
+            tabBarActiveBackgroundColor: "#4293FF",
+            tabBarActiveTintColor: 'black',
+            headerStyle: { backgroundColor: '#4293FF', }
+        })}>
+            <Stack.Screen name="Friends" component={FriendList} />
+        </Stack.Navigator>
+    )
+}
+
 const Navigation = () => {
 
     const [user, Setuser] = useState(0)
@@ -77,7 +93,7 @@ const Navigation = () => {
                 <Tab.Navigator screenOptions={{ headerShown: false }} >
                     <Tab.Screen name="Dashboard" title={'Homieess'} component={DashboardStack} />
                     <Tab.Screen name="Groups" component={GroupsListstack} />
-                    <Tab.Screen name="Friends" component={FriendList} />
+                    <Tab.Screen name="Friend" component={FriendStack} />
 
                 </Tab.Navigator>
             </NavigationContainer>

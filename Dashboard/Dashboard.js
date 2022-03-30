@@ -19,16 +19,23 @@ import NewGroup from "./Components/NewGroup";
 import TotalExpenses from "./Components/TotalExpenses";
 import AddExpense from "../Groups/AddExpense";
 import { useSelector, useDispatch } from "react-redux";
-const Dashboard = ({ navigation }) => {
-    const state = useSelector(state => state)
-    useEffect(() => {
+import { Getuser } from "../API/Getuser";
 
-        //   console.log('dashboard')
-        //   console.log(state)
+const Dashboard = ({ navigation }) => {
+    const state = useSelector(state => state.userReducer)
+
+    useEffect(async () => {
+        //  console.log('getting on  dashboard')
+        // const gets = await Getuser({ username: state.username, token: state.token })
+
+        // console.log(gets.objects)
+
+        //    console.log('dashboard')
+        //  console.log(state)
     }, [])
     return (
         <View style={styles.container}>
-            <TotalExpenses />
+            <TotalExpenses state={state} />
 
 
         </View>
