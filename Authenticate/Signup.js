@@ -1,7 +1,8 @@
 import { StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackground, TouchableOpacity, View, TextInput, Image } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from 'react'
-import { Signupapi } from '../API/Authenticate';
+import { AddProfile, Signupapi } from '../API/Authenticate';
+import { Getuser, SingleUser } from '../API/Getuser';
 const Signup = ({ Setsignup }) => {
     const [username, Setusername] = useState('')
     const [password, Setpassword] = useState('')
@@ -9,24 +10,45 @@ const Signup = ({ Setsignup }) => {
     const [passwrror, Setpasserror] = useState('')
     const dispatch = useDispatch()
     async function Authenticate() {
+
         if (username.length > 0 && password.length > 0 && !emailerror && !passwrror) {
-            console.log('adad')
             let data = {
                 username: username,
                 password: password
             }
             const response = await Signupapi(data)
+            console.log('-------->>>>>>>>...')
             console.log(response)
+            var profile_id
             if (JSON.stringify(response.success) == 'true') {
-                dispatch({
-                    type: 'Authenticate',
-                    payload: {
-                        value: {
-                            id: response.token,
-                            username: response.username,
-                        }
-                    }
-                })
+
+                await AddProfile({ profile_user: `/user/${response.id}/` }, { username: response.username, token: response.token })
+                    .then(res => {
+                        console.log('response of addprofile')
+                        console.log(res)
+                    })
+                await Getuser({ username: response.username, token: response.token })
+                    .then(data => {
+                        data.objects.map(item => {
+                            if (item.username == response.username) {
+                                dispatch({
+                                    type: 'Authenticate',
+                                    payload: {
+                                        value: {
+                                            resource_uri: item.resource_uri,
+                                            id: response.token,
+                                            username: response.username,
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+
+
             }
             else {
                 Setemailerror(response.error)

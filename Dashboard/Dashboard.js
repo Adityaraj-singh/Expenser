@@ -34,7 +34,7 @@ const Dashboard = ({ navigation }) => {
                 type: 'Authenticate',
                 payload: {
                     value: {
-                        resource_uri: item.resource_uri,
+                        resource_uri: state.resource_uri,
                         id: response.token,
                         username: response.username,
                     }

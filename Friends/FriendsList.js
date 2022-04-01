@@ -10,20 +10,87 @@ import { Searchbar } from 'react-native-paper';
 import AddFriend from "./Addfriends";
 import { Getuser } from "../API/Getuser";
 import { useSelector, useDispatch } from "react-redux";
+import { GetFriends } from "../API/GetFriends";
+import { compose } from "redux";
+import { UserDetail } from "../API/Getuser";
 const FriendList = () => {
     const state = useSelector(state => state.FriendsReducer)
     const [search, Setsearch] = useState('')
     const [addvisible, Setvisible] = useState(false)
-    const [friends, Setfriends] = useState(state)
+    const [friends, Setfriends] = useState([])
     const currentuser = useSelector(state => state.userReducer)
     const [allUsers, Setallusers] = useState([])
 
-    useEffect(async () => {
-        console.log('in friendsss')
+    async function getallusers() {
         const response = await Getuser({ username: currentuser.username, token: currentuser.token })
-        console.log(response.objects)
+        //console.log(response.objects)
         Setallusers(response.objects)
+    }
+
+    async function getFriends() {
+        let temp = []
+        let friendObject = await GetFriends(currentuser);
+
+        for (let i = 0; i < friendObject.objects.length; i++) {
+
+            let userDetail = await UserDetail(currentuser, friendObject.objects[i].p_friend);
+            console.log('userDetail', userDetail)
+            temp.push(userDetail[0])
+            // Setfriends([...friends, userDetail[0]])
+        }
+        /*         await friendObject.objects.forEach(async (item) => {
+                   
+                }) */
+        console.log('temp', temp)
+        Setfriends([...temp])
+    }
+    /*  async function getFriends() {
+ 
+         GetFriends(currentuser)
+             .then(data => {
+                 console.log('dat')
+                 //   console.log(data)
+                 let temp = []
+                 
+                 data.objects.map(item => {
+                     await UserDetail(currentuser, item.p_friend).then(item1 => {
+                         temp.push(item1[0])
+                         console.log('------>', item1[0])
+ 
+                             let sp = friends.filter(item => item.username == item1[0].username)
+                             if (sp.length == 0) {
+                                 Setfriends([...friends, item1[0]])
+                             }
+ 
+ 
+                     }).catch(err => {
+                         console.log(err)
+                     })
+                 })
+                 console.log(temp)
+                 Setfriends([...temp])
+ 
+             })
+             .catch(err => {
+                 console.log(err)
+             })
+     } */
+
+
+    useEffect(async () => {
+        await getallusers()
+        await getFriends()
+
+        /* let pp = await UserDetail(currentuser, '/user/56/')
+        console.log('ssssssssss')
+        console.log(pp) */
+
+
     }, [])
+    useEffect(() => {
+        console.log('friends', friends)
+    }, [friends])
+
     const Item = ({ title }) => (
         <View style={styles.item}>
             <View>
@@ -36,7 +103,7 @@ const FriendList = () => {
     );
     const renderItem = ({ item }) => (
 
-        <Item title={item.name} />
+        <Item title={item.username} />
     );
 
     if (addvisible)

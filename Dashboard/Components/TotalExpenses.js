@@ -23,11 +23,15 @@ const TotalExpenses = ({ state }) => {
 
     const [data, Setdata] = useState([])
 
+
+    const getGroups = async () => {
+        return await GetGroups(state)
+    }
     useEffect(async () => {
-        const resp = await GetGroups(state)
-        console.log(resp)
-        console.log('inside response')
-        Setdata(resp.objects)
+        // const resp = await GetGroups(state)
+        //  console.log(resp)
+        // console.log('inside response')
+        //   Setdata(resp.objects)
 
     }, [])
     const Item = ({ item, onPress, backgroundColor, textColor }) => (

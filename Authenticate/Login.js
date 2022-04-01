@@ -1,7 +1,7 @@
 import { StyleSheet, SafeAreaView, Text, Button, Pressable, ImageBackground, View, TextInput, Image } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from 'react'
-import { Signinapi } from '../API/Authenticate';
+import { AddProfile, Signinapi } from '../API/Authenticate';
 import { Getuser } from '../API/Getuser';
 const Login = ({ Setsignup, Setuser }) => {
 
@@ -24,31 +24,29 @@ const Login = ({ Setsignup, Setuser }) => {
         else {
             const response = await Signinapi({ username, password })
 
-            console.log('responsee is')
-            console.log(response)
             if (JSON.stringify(response.success) == 'true') {
-                // console.log('frontend-response')
-
                 console.log(response.success)
 
-
-                const gets = await Getuser({ username: response.username, token: response.token })
-                console.log('login me hi')
-                let dataTemp = gets.objects.filter((item) => {
-                    if (item.username == response.username) {
-                        return item
-                    }
-                })
-                dispatch({
-                    type: 'Authenticate',
-                    payload: {
-                        value: {
-                            id: response.token,
-                            username: response.username,
-                            resource_uri: dataTemp.resource_uri
-                        }
-                    }
-                })
+                await Getuser({ username: response.username, token: response.token })
+                    .then(data => {
+                        data.objects.map(item => {
+                            if (item.username == response.username) {
+                                dispatch({
+                                    type: 'Authenticate',
+                                    payload: {
+                                        value: {
+                                            resource_uri: item.resource_uri,
+                                            id: response.token,
+                                            username: response.username,
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             }
             else {
                 Seterror(response.error)
