@@ -19,20 +19,36 @@ import NewGroup from "./Components/NewGroup";
 import TotalExpenses from "./Components/TotalExpenses";
 import AddExpense from "../Groups/AddExpense";
 import { useSelector, useDispatch } from "react-redux";
-import { Getuser } from "../API/Getuser";
+import { Getuser, SingleUser } from "../API/Getuser";
+import { GetProfile } from "../API/GetProfile";
 
 const Dashboard = ({ navigation }) => {
     const state = useSelector(state => state.userReducer)
-
+    const dispatch = useDispatch()
     useEffect(async () => {
-        //  console.log('getting on  dashboard')
-        // const gets = await Getuser({ username: state.username, token: state.token })
+        console.log(state)
+        console.log('getting ste in dashboard')
+        await GetProfile(state).then((data) => {
+            console.log('weeess')
+            dispatch({
+                type: 'Authenticate',
+                payload: {
+                    value: {
+                        resource_uri: item.resource_uri,
+                        id: response.token,
+                        username: response.username,
+                    }
+                }
+            })
 
-        // console.log(gets.objects)
+        }).catch(err => {
+            console.log('errrr')
+            console.log(err)
+        })
 
-        //    console.log('dashboard')
-        //  console.log(state)
-    }, [])
+    })
+
+
     return (
         <View style={styles.container}>
             <TotalExpenses state={state} />
