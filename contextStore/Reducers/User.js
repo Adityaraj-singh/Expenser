@@ -1,6 +1,6 @@
 
 const userdetail = {
-    id: 0,
+    token: 0,
     username: '',
     resource_uri: '',
     profile_id: ''

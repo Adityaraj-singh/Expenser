@@ -6,7 +6,9 @@ import { useEffect } from 'react';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
-const NewGroup = ({ Setcreate }) => {
+import { AddGroup } from "../../API/GetGroups";
+import { MaterialIcons } from '@expo/vector-icons';
+const NewGroup = ({ Setcreate, getGroups1 }) => {
     const [groupname, Setgroupname] = useState('')
     const groups = useSelector(state => state.GroupReducer).length
     const currentuser = useSelector(state => state.userReducer)
@@ -14,19 +16,18 @@ const NewGroup = ({ Setcreate }) => {
     const [error, Seterror] = useState('')
     //console.log(groups)
     const dispatch = useDispatch()
-    function add() {
+    async function add() {
         if (groupname.length > 4) {
-            dispatch({
-                type: 'AddGroup',
-                payload: {
-                    value: {
-                        groupid: groups + 1,
-                        groupName: groupname,
-                        members: [currentuser.username]
-                    }
-                }
-            })
-            Setcreate(false)
+            await AddGroup(currentuser, groupname)
+                .then(async data => {
+                    console.log('addedd')
+                    Setcreate(false)
+                    console.log(data)
+                    await (getGroups1())
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         }
 
         else {
@@ -38,6 +39,11 @@ const NewGroup = ({ Setcreate }) => {
 
     return (
         <View style={[styles.card, styles.shadowProp]}>
+            <Pressable onPress={() => Setcreate(false)}>
+                <Text style={{ alignSelf: 'flex-end' }}>
+                    <MaterialIcons name="cancel" size={24} color="black" />
+                </Text>
+            </Pressable>
             <View style={styles.container_inner}>
                 <Text style={styles.heading}>
                     Create New Group
@@ -62,7 +68,6 @@ const NewGroup = ({ Setcreate }) => {
                     <Text style={{ fontWeight: 'bold', fontSize: 15, color: 'white' }}>
                         Create{' '}
                         <FontAwesome5 name="users" size={18} color="white" backgroundColor="transparent" />
-
                     </Text>
                 </Pressable>
                 <Text style={{ color: 'red', alignSelf: 'center' }}>{error}</Text>

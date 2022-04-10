@@ -62,7 +62,7 @@ export const UserDetail = async (data, friend_uri) => {
     const p = await SingleUser(data)
 
     let temp = p.objects.filter(item => item.resource_uri == friend_uri)
-    console.log('inside api', temp)
+
     return temp
 
 }

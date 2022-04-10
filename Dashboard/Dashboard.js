@@ -29,26 +29,55 @@ const Dashboard = ({ navigation }) => {
         console.log(state)
         console.log('getting ste in dashboard')
         await GetProfile(state).then((data) => {
-            console.log('weeess')
-            dispatch({
-                type: 'Authenticate',
-                payload: {
-                    value: {
-                        resource_uri: state.resource_uri,
-                        id: response.token,
-                        username: response.username,
-                    }
+            let pp = data.objects.filter(item => {
+                if (item.profile_user == state.resource_uri) {
+                    return item.resource_uri
                 }
             })
+            console.log('asssssssss', pp)
+            //  console.log(data.objects[0].resource_uri)
+            //   console.log(data.objects[1].id)
+            try {
+                dispatch({
+                    type: 'Authenticate',
+                    payload: {
+                        value: {
+                            resource_uri: state.resource_uri,
+                            id: state.token,
+                            username: state.username,
+                            profile_id: pp[0].resource_uri
+                        }
+                    }
+                })
+            }
+            catch (err) {
+                try {
+                    dispatch({
+                        type: 'Authenticate',
+                        payload: {
+                            value: {
+                                resource_uri: state.resource_uri,
+                                id: state.token,
+                                username: state.username,
+                                profile_id: data.objects[0].resource_uri
+                            }
+                        }
+                    })
+                }
+                catch (err) {
+                    console.log(err)
+                }
+            }
 
         }).catch(err => {
             console.log('errrr')
             console.log(err)
         })
 
-    })
+    }, [])
 
 
+    console.log(state)
     return (
         <View style={styles.container}>
             <TotalExpenses state={state} />
