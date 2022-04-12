@@ -30,13 +30,7 @@ const AddFriend = ({
   const currentuser = useSelector((state) => state.userReducer);
   async function add(data) {
     console.log("added", data);
-    await UserDetail(currentuser, data).then((item) => {
-      console.log("his namee", item[0].username);
-      Setfriends([
-        ...friends1,
-        { resource_uri: data, p_friend: { username: item[0].username } },
-      ]);
-    });
+
     //  console.log(data, currentuser.profile_id)
     await AddFriendApi(currentuser, currentuser.profile_id, data)
       .then((data) => {
@@ -52,7 +46,6 @@ const AddFriend = ({
 
   useEffect(() => {
     console.log("all friends");
-    console.log(users);
   }, [friends1]);
 
   useEffect(() => {

@@ -41,7 +41,7 @@ const FriendList = () => {
   async function get_allFriends() {
     await GetFriends(currentuser)
       .then((data) => {
-        console.log("frinedsss---------");
+        //  console.log("frinedsss---------");
         Setfriends(data.objects);
       })
       .catch((err) => {
@@ -50,11 +50,11 @@ const FriendList = () => {
   }
 
   async function removeFriend(id) {
-    console.log("removinff", id);
+    //  console.log("removinff", id);
     await DeleteFriend(currentuser, id)
       .then(async (data) => {
         await get_allFriends().then((data) => {
-          console.log("removedd");
+          // console.log("removedd");
         });
       })
       .catch((err) => {
@@ -69,7 +69,8 @@ const FriendList = () => {
     /* let pp = await UserDetail(currentuser, '/user/56/')
         console.log('ssssssssss')
         console.log(pp) */
-  }, []);
+    console.log("friends");
+  }, [addvisible]);
 
   const Item = ({ userid, title }) => (
     <View style={styles.item}>
@@ -93,7 +94,11 @@ const FriendList = () => {
     </View>
   );
   const renderItem = ({ item }) => (
-    <Item key={item.id} userid={item.id} title={item.p_friend.username} />
+    <Item
+      key={item.id}
+      userid={item.id}
+      title={item.user ? item.user.username : item.p_friend.username}
+    />
   );
 
   if (addvisible)

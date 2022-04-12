@@ -5,13 +5,20 @@ import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect } from "react";
 import DropDown from "./Dropdown";
-
+import { useSelector } from "react-redux";
 const Expenses = ({ key, expensedata, groupmembers, navigation }) => {
   const [data, Setdata] = useState(expensedata);
   const [splitmembers, setsplitmembers] = useState([]);
   const [iscollapsed, Setiscollapsed] = useState(false);
-
-  useEffect(() => {});
+  const currentuser = useSelector((state) => state.userReducer);
+  const [iowe, setIowe] = useState("");
+  useEffect(() => {
+    data.splitters.map((item) => {
+      if (item.e_splitter.friend.user.username == currentuser.username) {
+        setIowe(item.owes);
+      }
+    });
+  });
   return (
     <View style={{ paddingHorizontal: 5 }}>
       <View style={styles.container}>
@@ -64,9 +71,7 @@ const Expenses = ({ key, expensedata, groupmembers, navigation }) => {
             >
               You Owe
             </Text>
-            <Text style={{ color: "white", fontSize: 10 }}>
-              {(data.amount / groupmembers.length).toFixed(2) + " Rs"}
-            </Text>
+            <Text style={{ color: "white", fontSize: 10 }}>{iowe + " Rs"}</Text>
           </View>
           <View>
             <Pressable
@@ -85,7 +90,13 @@ const Expenses = ({ key, expensedata, groupmembers, navigation }) => {
         </View>
       </View>
 
-      {/* iscollapsed ? <DropDown key={key} transactions={data.transactions} /> : null */}
+      {iscollapsed ? (
+        <DropDown
+          key={key}
+          payer={expensedata.payer}
+          transactions={expensedata.splitters}
+        />
+      ) : null}
     </View>
   );
 };

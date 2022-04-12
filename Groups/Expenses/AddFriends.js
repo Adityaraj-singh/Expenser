@@ -35,14 +35,12 @@ const AddFriendsToGroup = (props) => {
       let temparr = [];
       console.log(data.objects);
       data.objects.map((item) => {
-        if (item.p_friend.username !== currentuser.username) {
-          temparr.push({
-            resource_uri: item.p_friend.resource_uri,
-            username: item.p_friend.username,
-            profile: item.resource_uri,
-          });
-          Setfriends(temparr);
-        }
+        temparr.push({
+          resource_uri: item.user.resource_uri,
+          username: item.user.username,
+          profile: item.resource_uri,
+        });
+        Setfriends(temparr);
       });
     });
 

@@ -16,7 +16,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { exp } from "react-native/Libraries/Animated/Easing";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
-
+import { useIsFocused } from "@react-navigation/native";
 import NewGroup from "../Dashboard/Components/NewGroup";
 import GroupDetail from "./GroupDetail";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -27,7 +27,7 @@ import React, { useEffect, useState } from "react";
 const groups = [];
 const GroupList = ({ navigation }) => {
   const dispatch = useDispatch();
-
+  const isFocused = useIsFocused();
   const currentuser = useSelector((state) => state.userReducer);
   // console.log('groupss')
   //  console.log(groups)
@@ -43,14 +43,13 @@ const GroupList = ({ navigation }) => {
       username: currentuser.username,
       token: currentuser.token,
     });
-    console.log("in groupss");
-    console.log(res.objects);
+
     Setgroups(res.objects);
   }
 
   useEffect(async () => {
     await getGroups1();
-  }, []);
+  }, [isFocused]);
 
   function Selectgroups(id, name, group_friends, creator) {
     setSelectedId(id);
@@ -71,7 +70,6 @@ const GroupList = ({ navigation }) => {
         {" "}
         <FontAwesome5 name="users" size={20} color="black" /> {item.name}
       </Text>
-      x
     </TouchableOpacity>
   );
 
@@ -126,7 +124,7 @@ const GroupList = ({ navigation }) => {
               onPress={() => Setcreate(!create)}
             />
           </View>
-          <View></View>
+
           <FlatList
             data={groups}
             renderItem={renderItem}

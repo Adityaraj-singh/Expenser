@@ -1,5 +1,12 @@
 import React, { useEffect } from "react";
-import { FlatList, StyleSheet, Text, Pressable, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  Pressable,
+  View,
+  Alert,
+} from "react-native";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { exp } from "react-native/Libraries/Animated/Easing";
@@ -14,10 +21,12 @@ import { useSelector } from "react-redux";
 import { UserDetail } from "../API/Getuser";
 import { GetFriends } from "../API/GetFriends";
 import Members from "./Expenses/Members";
-import ShowExpense from "../API/Expense";
+import { ShowExpense } from "../API/ShowExpense";
+import { useIsFocused } from "@react-navigation/native";
+import { TextInput } from "react-native-paper";
+import { ScrollView } from "react-native-gesture-handler";
+
 const GroupDetail = ({ route, navigation }) => {
-  /*  console.log('route')
-     console.log(route.params) */
   const [iscreate, Setiscreate] = useState(false);
   const [statement, Setstatement] = useState([]);
   const [addingfriend, Setaddingfriend] = useState(false);
@@ -30,7 +39,9 @@ const GroupDetail = ({ route, navigation }) => {
   const [showmembers, setShowmembers] = useState(false);
   const [allexpense, setAllexpense] = useState([]);
   const allExpenses = [];
+  const [rename, setRename] = useState("");
   const [changes, setchanges] = useState(false);
+  const [newname, setNewname] = useState("");
   const expenses = allExpenses.filter((item) => {
     if (item.groupId == GroupId) {
       return item;
@@ -40,34 +51,102 @@ const GroupDetail = ({ route, navigation }) => {
     if (item.groupid == GroupId) return item;
   });
 
-  async function getExpense() {
-    let temparray2 = [];
-    await ShowExpense(currentuser)
-      .then((data) => {
-        console.log(data);
-
-        //setAllexpense(temparray2);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  async function DeleteApi() {
+    try {
+      await fetch(
+        `https://expenser-app-django-heroku.herokuapp.com/group/${GroupId}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `ApiKey ${currentuser.username}:${currentuser.token}`,
+          },
+        }
+      )
+        .then((data) => {
+          navigation.navigate("Groupstack");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
   }
-  console.log(allexpense);
+
+  async function DeleteGroup() {
+    Alert.alert(
+      "Warning",
+      `This will Delete everything in ${
+        newname.length > 0 ? newname : groupName
+      }`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "Delete", onPress: () => DeleteApi() },
+      ]
+    );
+  }
+  async function renameGroup() {
+    let params = {
+      creator: creator,
+      name: rename,
+    };
+    if (rename.length > 0) {
+      try {
+        await fetch(
+          `https://expenser-app-django-heroku.herokuapp.com/group/${GroupId}/`,
+          {
+            method: "PUT",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `ApiKey ${currentuser.username}:${currentuser.token}`,
+            },
+            body: JSON.stringify(params),
+          }
+        )
+          .then((data) => {
+            setNewname(rename);
+            setRename("");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (err) {
+        console.log(err);
+        return err;
+      }
+    }
+  }
+
+  async function getExpensesshow() {
+    await ShowExpense(currentuser).then((data) => {
+      let temp = [];
+      data.objects.map((item) => {
+        if (item.group == `/group/${GroupId}/`) {
+          temp.push(item);
+        }
+      });
+      setAllexpense(temp);
+    });
+  }
   useEffect(async () => {
     let temparr = [];
     let create = {};
     if (creator == currentuser.resource_uri) {
       setIsadmin(true);
-      create = {
-        resource_uri: currentuser.resource_uri,
-        username: currentuser.username,
-      };
     } else {
       let temparr = [];
       await UserDetail(currentuser, creator)
         .then((data) => {
-          //    console.log(data[0], "dataa is");
           create = data[0];
+          temparr.push(create);
         })
         .catch((err) => {
           console.log(err);
@@ -76,106 +155,106 @@ const GroupDetail = ({ route, navigation }) => {
     }
 
     group_friends.map((item) => {
-      temparr.push(item.p_friend);
+      temparr.push(item.user);
     });
-    temparr.push(create);
 
     setGroupmembers(temparr);
+    await getExpensesshow();
+  }, []);
+  const isFocused = useIsFocused();
 
-    await getExpense();
+  useEffect(async () => {
+    await getExpensesshow();
+    var members = [];
+    //Adding data structure according to Group Members
+    group_friends.map((friend) =>
+      members.push({
+        username: friend.user.username,
+        profile_friend: friend.resource_uri,
+        accounts: [],
+      })
+    );
+  }, [isFocused]);
 
-    console.log("changess changed");
-  }, [changes]);
-  const members = groupmembers
-    .map((item) => {
-      return item.username;
-    })
-    .join(",");
+  useEffect(async () => {
+    var members = [];
+    //Adding data structure according to Group Members
+    group_friends.map((friend) =>
+      members.push({
+        username: friend.user.username,
+        profile_friend: friend.resource_uri,
+        accounts: [],
+      })
+    );
 
-  const current_group_members = [];
-  //console.log('memberingg')
-  // console.log(current_group_members)
-  /*
-
-    
-    useEffect(() => {
-        //     console.log('grp detail')
-        //  console.log(route.params)
-        var PMS = PMS || {}
-
-        PMS.GroupBalanceData = PMS.GroupBalanceData || {};
-
-        PMS.GroupBalanceData.members = current_group_members.map((item) => {
-            return {
-                name: item,
-                accounts: []
-            }
-        });
-        //  console.log('statemenbtsss', PMS.GroupBalanceData.members)
-        expenses.forEach((elm) => {
-            PMS.GroupBalanceData.members.forEach((member) => {
-                if (elm.owner !== member.name) {
-                    elm.transactions.forEach((trans) => {
-                        if (member.name === trans.ower) {
-                            if (member.accounts.find((acc) => acc.name === trans.lender)) {
-                                let ref = member.accounts.find(
-                                    (acc) => acc.name === trans.lender
-                                );
-                                ref.amount = parseInt(ref.amount) + parseInt(trans.amount);
-                            } else {
-                                member.accounts = [
-                                    ...member.accounts,
-                                    {
-                                        name: trans.lender,
-                                        amount: parseInt(trans.amount),
-                                    },
-                                ];
-                            }
-                        }
-                    });
+    allexpense.map((expense) => {
+      if (expense.group == `/group/${GroupId}/`) {
+        members.map((member) => {
+          if (expense.payer.friend.resource_uri !== member.profile_friend) {
+            expense.splitters.map((splitter) => {
+              if (
+                expense.payer.friend.resource_uri !==
+                splitter.e_splitter.friend.resource_uri
+              ) {
+                if (
+                  member.profile_friend ==
+                  splitter.e_splitter.friend.resource_uri
+                ) {
+                  let ref = member.accounts.find(
+                    (acc) =>
+                      acc.profile_friend == expense.payer.friend.resource_uri
+                  );
+                  if (ref) {
+                    ref.amount = ref.amount + splitter.owes;
+                  } else {
+                    member.accounts = [
+                      ...member.accounts,
+                      {
+                        username: expense.payer.friend.user.username,
+                        profile_friend: expense.payer.friend.resource_uri,
+                        amount: splitter.owes,
+                      },
+                    ];
+                  }
                 }
+              }
             });
+          }
         });
-        PMS.GroupBalanceData.members.forEach((member) => {
-            let otherMembers = PMS.GroupBalanceData.members.filter(
-                (_member) => _member.name !== member.name
-            );
-            member.accounts.forEach((account) => {
-                otherMembers.forEach((_member) => {
-                    if (_member.name === account.name) {
-                        _member.accounts.forEach((_account) => {
-                            if (_account.name === member.name) {
-                                // let otherAccount = new Object.assign(_account);
-                                if (account.amount > _account.amount) {
-                                    account.amount =
-                                        parseInt(account.amount) - parseInt(_account.amount);
-                                    _account.amount = 0;
-                                } else {
-                                    _account.amount =
-                                        parseInt(_account.amount) - parseInt(account.amount);
-                                    account.amount = 0;
-                                }
-                            }
-                        });
-                    }
-                });
+      }
+    });
+    members.map(function (member) {
+      let otherMembers = members.filter(
+        (_member) => _member.profile_friend !== member.profile_friend
+      );
+      member.accounts.map(function (account) {
+        otherMembers.map(function (otherMember) {
+          if (otherMember.profile_friend == account.profile_friend) {
+            otherMember.accounts.map(function (oMemAccount) {
+              if (oMemAccount.profile_friend == member.profile_friend) {
+                if (account.amount > oMemAccount.amount) {
+                  account.amount = account.amount - oMemAccount.amount;
+                } else {
+                  oMemAccount.amount = oMemAccount.amount - account.amount;
+                  account.amount = 0;
+                }
+              }
             });
+          }
         });
-        PMS.GroupBalanceStatement = [];
-        PMS.GroupBalanceData.members.map((member) => {
-            member.accounts.forEach((account) => {
-                PMS.GroupBalanceStatement.push({
-                    lender: account.name,
-                    ower: member.name,
-                    amount: account.amount,
-                });
-            });
-        });
-        // console.log('FInal statement')
-        //   console.log(PMS.GroupBalanceStatement)
-        Setstatement(PMS.GroupBalanceStatement)
-    }, [allExpenses])
-    */
+      });
+    });
+
+    Setstatement(members);
+    /*  console.log("------------");
+    members.map((member) => {
+      member.accounts.map((account) => {
+        console.log(
+          `${member.username} owes ${account.amount} to ${account.username}`
+        );
+      });
+    }); */
+  }, [allexpense]);
 
   if (addingfriend) {
     return (
@@ -202,11 +281,32 @@ const GroupDetail = ({ route, navigation }) => {
           }}
         >
           <Text style={{ fontSize: 18 }}>
-            Members in <Text style={{ fontWeight: "bold" }}>{groupName}</Text> :{" "}
+            <Text style={{ fontWeight: "bold" }}>
+              {newname.length > 0 ? newname : groupName}
+            </Text>{" "}
+            :{" "}
           </Text>
-          <Text style={{ fontWeight: "bold", top: 3, marginLeft: 5 }}>
-            {groupmembers.length > 0 ? members : "0"}
-          </Text>
+          <Pressable style={styles.deletebtn} onPress={() => DeleteGroup()}>
+            <Text style={styles.deleteText}>Delete Group</Text>
+          </Pressable>
+        </View>
+        <View
+          style={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginBottom: 10,
+          }}
+        >
+          <TextInput
+            style={styles.rename}
+            onChangeText={(text) => setRename(text)}
+            placeholder="Rename"
+          />
+          <Pressable style={styles.renamebtn} onPress={() => renameGroup()}>
+            <Text style={styles.renameText}>Rename</Text>
+          </Pressable>
         </View>
         {showmembers ? (
           <Members
@@ -255,6 +355,8 @@ const GroupDetail = ({ route, navigation }) => {
                   groupName,
                   groupmembers,
                   currentuser,
+                  changes,
+                  setchanges,
                 })
               }
             >
@@ -271,7 +373,7 @@ const GroupDetail = ({ route, navigation }) => {
         {iscreate ? (
           <AddExpense />
         ) : (
-          <View style={styles.expense}>
+          <ScrollView style={styles.expense}>
             {allexpense.length !== 0 ? (
               allexpense.map((item, index) => {
                 return (
@@ -293,7 +395,7 @@ const GroupDetail = ({ route, navigation }) => {
                 No Epxense yet
               </Text>
             )}
-          </View>
+          </ScrollView>
         )}
         {iscreate ? null : (
           <View style={styles.group_balance}>
@@ -305,8 +407,15 @@ const GroupDetail = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  expense: {
+    height: "60%",
+  },
+  rename: {
+    width: "60%",
+    height: 20,
+  },
   group_balance: {
-    marginTop: 10,
+    marginTop: 0,
     position: "relative",
     bottom: 0,
     width: "90%",
@@ -335,6 +444,46 @@ const styles = StyleSheet.create({
   addtext: {
     color: "white",
     display: "flex",
+    flexDirection: "row",
+    fontWeight: "bold",
+  },
+  renameText: {
+    color: "white",
+    display: "flex",
+
+    fontSize: 10,
+    flexDirection: "row",
+    fontWeight: "bold",
+  },
+  renamebtn: {
+    width: 50,
+    backgroundColor: "green",
+    borderRadius: 50,
+    height: 25,
+    textAlign: "center",
+    alignSelf: "flex-end",
+    paddingLeft: 6,
+    paddingTop: 5,
+    paddingVertical: 2,
+    marginLeft: 10,
+  },
+  deletebtn: {
+    width: 100,
+    backgroundColor: "red",
+    borderRadius: 50,
+    height: 25,
+    textAlign: "center",
+    alignSelf: "flex-end",
+
+    paddingTop: 5,
+    paddingVertical: 2,
+    marginLeft: 10,
+  },
+  deleteText: {
+    color: "white",
+    display: "flex",
+    alignSelf: "center",
+    fontSize: 10,
     flexDirection: "row",
     fontWeight: "bold",
   },

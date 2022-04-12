@@ -21,8 +21,10 @@ import { LogBox } from "react-native";
 import { Dropdown } from "react-native-material-dropdown";
 import { ScrollView } from "react-native-gesture-handler";
 import GetFriendsFromAllGroups from "../API/GetfriendsFromAllGroup";
+import { AddExpenseapi, AddSplittersapi } from "../API/AddExpense";
 const AddExpense = ({ route, navigation }) => {
-  const { GroupId, groupName, groupmembers } = route.params;
+  const { GroupId, groupName, groupmembers, changes, setchanges } =
+    route.params;
   const [isSwitchOn, setIsSwitchOn] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
@@ -44,9 +46,7 @@ const AddExpense = ({ route, navigation }) => {
   );
   const [friends, Setfriends] = useState(
     groupmembers.filter((item) => {
-      if (item.username !== states.username) {
-        return item;
-      }
+      return item;
     })
   );
   const [dividedamt, Setdividedamt] = useState(0);
@@ -55,7 +55,7 @@ const AddExpense = ({ route, navigation }) => {
   async function remove(id) {
     setSplitters(
       splitters.filter((item) => {
-        if (item.friend.p_friend.username !== id) {
+        if (item.friend.user.username !== id) {
           return item;
         }
       })
@@ -68,9 +68,10 @@ const AddExpense = ({ route, navigation }) => {
 
       data.objects.map((item) => {
         if (
-          item.friend.p_friend.username == id &&
+          item.friend.user.username == id &&
           item.group == `/group/${GroupId}/`
         ) {
+          //console.log("found");
           item["amount"] = 0;
           setSplitters([...splitters, item]);
         }
@@ -79,19 +80,77 @@ const AddExpense = ({ route, navigation }) => {
   }
 
   async function addexpense() {
+    var total = 0;
+    if (isSwitchOn) {
+      for (let i = 0; i < splitters.length; i++) {
+        splitters[i]["amount"] = dividedamt;
+      }
+    } else {
+      for (let i = 0; i < splitters.length; i++) {
+        total += parseInt(splitters[i]["amount"]);
+      }
+
+      if (total > amount) {
+        // console.log("Not Valid", total, amount);
+        return false;
+      } else {
+        //  console.log("move forward");
+      }
+    }
+
+    // console.log(splitters);
     await GetFriendsFromAllGroups(states).then((data) => {
       data.objects.map((item) => {
         if (
           item.group == `/group/${GroupId}/` &&
-          item.friend.p_friend.username == states.username
+          item.friend.user.username == owner
         ) {
-          console.log(item);
+          // console.log(item.resource_uri);
+          AddExpenseapi(
+            states,
+            amount,
+            `/group/${GroupId}/`,
+            expensename,
+            item.resource_uri
+          ).then((data) => {
+            // console.log("aa gya reponse");
+            console.log(data);
+            try {
+              for (let k = 0; k < splitters.length; k++) {
+                AddSplittersapi(
+                  states,
+                  splitters[k].resource_uri,
+                  data.resource_uri,
+                  parseInt(splitters[k].amount)
+                ).then((data) => {
+                  console.log("END");
+                  console.log(data);
+                });
+              }
+
+              navigation.goBack();
+            } catch (err) {
+              console.log(err);
+            }
+
+            /* splitters.map((item) => {
+              AddSplittersapi(
+                states,
+                item.resource_uri,
+                data.resource_uri,
+                parseInt(item.amount)
+              ).then((data) => {
+                console.log("aaakhri meee");
+                console.log(data);
+              });
+            }); */
+          });
         }
       });
     });
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     let temp = parseInt(amount) / parseInt(splitters.length);
     // console.log(temp + ' divided')
 
@@ -102,7 +161,7 @@ const AddExpense = ({ route, navigation }) => {
     console.log(id, amount);
 
     splitters.map((item) => {
-      if (item.friend.p_friend.username == id) {
+      if (item.friend.user.username == id) {
         item["amount"] = amount;
       }
     });
@@ -112,23 +171,20 @@ const AddExpense = ({ route, navigation }) => {
     <View onPress={onPress} style={[styles.item, backgroundColor]}>
       <Text style={{ marginTop: 4, width: "40%" }}>
         {" "}
-        {item.friend.p_friend.username}
+        {item.friend.user.username}
       </Text>
       {isSwitchOn ? (
         <TextInput
           style={styles.amount}
           keyboardType="numeric"
           value={dividedamt.toString()}
-          onChangeText={() =>
-            adduseramount(item.friend.p_friend.username, dividedamt)
-          }
         />
       ) : (
         <TextInput
           style={styles.amount}
           placeholder="amount"
           onChangeText={(event) =>
-            adduseramount(item.friend.p_friend.username, event)
+            adduseramount(item.friend.user.username, event)
           }
         />
       )}
@@ -140,7 +196,7 @@ const AddExpense = ({ route, navigation }) => {
           borderRadius: 50,
           marginRight: 5,
         }}
-        onPress={() => remove(item.friend.p_friend.username)}
+        onPress={() => remove(item.friend.user.username)}
       >
         <Text>
           {" "}
@@ -151,7 +207,10 @@ const AddExpense = ({ route, navigation }) => {
   );
   const Item2 = ({ item, onPress, backgroundColor, textColor }) => (
     <View onPress={onPress} style={[styles.item, backgroundColor]}>
-      <Text style={[styles.Name, textColor]}> {item.username}</Text>
+      <Text style={[styles.Name, textColor]}>
+        {" "}
+        {item.username == states.username ? "You" : item.username}
+      </Text>
       <Pressable onPress={() => add(item.username)}>
         <Text>
           {" "}
@@ -268,7 +327,7 @@ const AddExpense = ({ route, navigation }) => {
           </View>
         </View>
         <Pressable style={styles.add} onPress={addexpense}>
-          <Text style={styles.text}>{"Create/"}</Text>
+          <Text style={styles.text}>{"Create"}</Text>
         </Pressable>
         <View>
           <Text style={{ color: "red", alignSelf: "center" }}>{error}</Text>

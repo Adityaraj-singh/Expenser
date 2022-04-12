@@ -3,15 +3,15 @@ import GetFriendsFromAllGroups from "../../API/GetfriendsFromAllGroup";
 import { FlatList, StyleSheet, Text, Pressable, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Kick from "../../API/Kick";
+import { useIsFocused } from "@react-navigation/native";
+
 const Members = (props) => {
   const [frineds1, setFriends1] = useState([]);
   const [members, Setmembers] = useState([]);
-
+  const isFocused = useIsFocused();
   async function KickFriend(item) {
     await Kick(props.currentuser, item.resource_uri)
       .then((data) => {
-        console.log("responseee");
-        console.log(data);
         let temp = frineds1.filter;
       })
       .catch((err) => {
@@ -21,10 +21,9 @@ const Members = (props) => {
   const removeFriend = async (user) => {
     frineds1.filter((item) => {
       if (
-        item.friend.p_friend.resource_uri == user &&
+        item.friend.user.resource_uri == user &&
         item.group == `/group/${props.groupid}/`
       ) {
-        console.log(item.resource_uri);
         KickFriend(item);
       }
     });
@@ -41,13 +40,11 @@ const Members = (props) => {
     await getFriends();
 
     let temp = props.groupmembers.filter((item) => {
-      if (item.username !== props.currentuser.username) {
-        return item;
-      }
+      return item;
     });
 
     Setmembers(temp);
-  }, []);
+  }, [isFocused]);
   const Item = ({ userid, title }) => (
     <View style={styles.item}>
       <View>
