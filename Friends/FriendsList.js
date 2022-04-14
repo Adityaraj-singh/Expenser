@@ -21,11 +21,13 @@ import { GetFriends } from "../API/GetFriends";
 import { compose } from "redux";
 import { UserDetail } from "../API/Getuser";
 import { DeleteFriend } from "../API/AddFriends";
+import { GetProfile } from "../API/GetProfile";
 const FriendList = () => {
   const state = useSelector((state) => state.FriendsReducer);
   const [search, Setsearch] = useState("");
   const [addvisible, Setvisible] = useState(false);
   const [friends, Setfriends] = useState([]);
+
   const currentuser = useSelector((state) => state.userReducer);
   const [allUsers, Setallusers] = useState([]);
 
@@ -39,10 +41,10 @@ const FriendList = () => {
   }
 
   async function get_allFriends() {
-    await GetFriends(currentuser)
+    await GetProfile(currentuser)
       .then((data) => {
-        //  console.log("frinedsss---------");
-        Setfriends(data.objects);
+        Setfriends(data.objects[0].profile_friends);
+        console.log("--", friends);
       })
       .catch((err) => {
         console.log(err);
@@ -50,12 +52,9 @@ const FriendList = () => {
   }
 
   async function removeFriend(id) {
-    //  console.log("removinff", id);
     await DeleteFriend(currentuser, id)
       .then(async (data) => {
-        await get_allFriends().then((data) => {
-          // console.log("removedd");
-        });
+        await get_allFriends().then((data) => {});
       })
       .catch((err) => {
         console.log(err);
@@ -65,11 +64,6 @@ const FriendList = () => {
   useEffect(async () => {
     await getallusers();
     get_allFriends();
-
-    /* let pp = await UserDetail(currentuser, '/user/56/')
-        console.log('ssssssssss')
-        console.log(pp) */
-    console.log("friends");
   }, [addvisible]);
 
   const Item = ({ userid, title }) => (
@@ -121,12 +115,6 @@ const FriendList = () => {
         <View style={[styles.card, styles.shadowProp]}>
           <Text style={styles.heading}>My Friends</Text>
           <View style={styles.inner_card}>
-            <Searchbar
-              placeholder="Search"
-              onChangeText={(text) => Setsearch(text)}
-              value={search}
-            />
-
             <FlatList
               key={friends}
               data={friends}

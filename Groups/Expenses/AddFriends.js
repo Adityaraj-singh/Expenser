@@ -17,6 +17,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { UserDetail } from "../../API/Getuser";
 import { GetFriends } from "../../API/GetFriends";
 import { AddMember } from "../../API/AddMember";
+import { GetProfile } from "../../API/GetProfile";
 
 const AddFriendsToGroup = (props) => {
   const { groupid } = props;
@@ -30,11 +31,11 @@ const AddFriendsToGroup = (props) => {
   const dispatch = useDispatch();
   async function getFriends() {
     let temp = [];
-    await GetFriends(currentuser).then((data) => {
+    await GetProfile(currentuser).then((data) => {
       console.log("data");
       let temparr = [];
-      console.log(data.objects);
-      data.objects.map((item) => {
+
+      data.objects[0].profile_friends.map((item) => {
         temparr.push({
           resource_uri: item.user.resource_uri,
           username: item.user.username,
@@ -69,6 +70,7 @@ const AddFriendsToGroup = (props) => {
         if (data && data.friend) {
           Setsuccess(name + "added");
           props.setchanges(!props.changes);
+          props.Setaddingfriend(false);
           setTimeout(() => {
             Setsuccess("");
           }, 2000);
@@ -111,7 +113,7 @@ const AddFriendsToGroup = (props) => {
   };
   return (
     <View style={[styles.card, styles.shadowProp]}>
-      <Text style={styles.heading}> Add Friends to {props.groupname}</Text>
+      <Text style={styles.heading}> Add Members to {props.groupname}</Text>
       <View style={{ alignItems: "center" }}>
         <Text style={{ color: "red", fontStyle: "italic" }}>{error}</Text>
         <Text style={{ color: "green", fontStyle: "italic" }}>{success}</Text>

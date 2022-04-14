@@ -107,20 +107,29 @@ const GroupList = ({ navigation }) => {
                 fontWeight: "bold",
                 marginLeft: "auto",
                 marginRight: "auto",
-                borderBottomColor: "black",
-                borderBottomWidth: 2,
+
                 width: "92%",
                 textAlign: "center",
-                marginBottom: 20,
+                marginBottom: 0,
               }}
             >
-              Groups
+              {" "}
             </Text>
+
             <AntDesign
               name="addusergroup"
               size={24}
               color="green"
-              style={{ position: "relative", right: 30 }}
+              style={{
+                marginTop: 5,
+                position: "relative",
+                right: 30,
+                borderWidth: 2,
+                borderColor: "black",
+                borderRadius: 5,
+                paddingHorizontal: 5,
+                paddingVertical: 5,
+              }}
               onPress={() => Setcreate(!create)}
             />
           </View>
@@ -140,7 +149,12 @@ const GroupList = ({ navigation }) => {
     <View style={styles.container}>
       <GroupList2 />
       <Pressable style={styles.add} onPress={Loguerout}>
-        <Text>Logout{currentuser.resource_uri}</Text>
+        <Text>
+          Logout from
+          <Text style={{ fontWeight: "bold" }}>
+            {" " + currentuser.username}
+          </Text>{" "}
+        </Text>
       </Pressable>
     </View>
   );

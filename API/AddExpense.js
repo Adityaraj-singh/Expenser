@@ -37,7 +37,6 @@ export const AddSplittersapi = async (data, e_splitter, expense, owes) => {
     owes,
   };
 
-  console.log("-------->>>", params);
   try {
     const res = await fetch(
       "https://expenser-app-django-heroku.herokuapp.com/expense_splitter/",

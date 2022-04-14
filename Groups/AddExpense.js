@@ -35,7 +35,7 @@ const AddExpense = ({ route, navigation }) => {
   const [owner, Setowner] = useState("");
   const [allmembers, setAllmembers] = useState([]);
   const data = groupmembers.map((item) => {
-    return { value: item.username };
+    return { value: item.friend.user.username };
   });
   const friendsarray = [];
 
@@ -49,6 +49,7 @@ const AddExpense = ({ route, navigation }) => {
       return item;
     })
   );
+
   const [dividedamt, Setdividedamt] = useState(0);
   const [error, Seterror] = useState("");
   const [splitters, setSplitters] = useState([]);
@@ -65,8 +66,9 @@ const AddExpense = ({ route, navigation }) => {
   async function add(id) {
     await GetFriendsFromAllGroups(states).then((data) => {
       // console.log("-----------");
-
+      console.log(id);
       data.objects.map((item) => {
+        console.log(item.friend.user.username, id);
         if (
           item.friend.user.username == id &&
           item.group == `/group/${GroupId}/`
@@ -209,9 +211,9 @@ const AddExpense = ({ route, navigation }) => {
     <View onPress={onPress} style={[styles.item, backgroundColor]}>
       <Text style={[styles.Name, textColor]}>
         {" "}
-        {item.username == states.username ? "You" : item.username}
+        {item.username == states.username ? "You" : item.friend.user.username}
       </Text>
-      <Pressable onPress={() => add(item.username)}>
+      <Pressable onPress={() => add(item.friend.user.username)}>
         <Text>
           {" "}
           <AntDesign name="pluscircleo" size={24} color="white" />{" "}

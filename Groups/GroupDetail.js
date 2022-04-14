@@ -25,7 +25,7 @@ import { ShowExpense } from "../API/ShowExpense";
 import { useIsFocused } from "@react-navigation/native";
 import { TextInput } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
-
+import GetFriendsFromAllGroups from "../API/GetfriendsFromAllGroup";
 const GroupDetail = ({ route, navigation }) => {
   const [iscreate, Setiscreate] = useState(false);
   const [statement, Setstatement] = useState([]);
@@ -42,6 +42,7 @@ const GroupDetail = ({ route, navigation }) => {
   const [rename, setRename] = useState("");
   const [changes, setchanges] = useState(false);
   const [newname, setNewname] = useState("");
+  const [myfriendid, setMyfriendid] = useState("");
   const expenses = allExpenses.filter((item) => {
     if (item.groupId == GroupId) {
       return item;
@@ -50,7 +51,7 @@ const GroupDetail = ({ route, navigation }) => {
   const current_group = state.filter((item) => {
     if (item.groupid == GroupId) return item;
   });
-
+  const isFocused = useIsFocused();
   async function DeleteApi() {
     try {
       await fetch(
@@ -154,67 +155,83 @@ const GroupDetail = ({ route, navigation }) => {
       setIsadmin(false);
     }
 
-    group_friends.map((item) => {
-      temparr.push(item.user);
-    });
+    group_friends.map(
+      (item) => {
+        temparr.push(item);
+      },
+      [isFocused, changes]
+    );
 
     setGroupmembers(temparr);
     await getExpensesshow();
-  }, []);
-  const isFocused = useIsFocused();
+    await GetFriendsFromAllGroups(currentuser).then((data) => {
+      data.objects.map((friend) => {
+        if (
+          friend.friend.user.username == currentuser.username &&
+          friend.group == `/group/${GroupId}/`
+        ) {
+          setMyfriendid(friend.resource_uri);
+        }
+      });
+    });
+    console.log("changeddd");
+  }, [isFocused, changes]);
 
   useEffect(async () => {
     await getExpensesshow();
     var members = [];
     //Adding data structure according to Group Members
-    group_friends.map((friend) =>
+    group_friends.map((friend) => {
       members.push({
-        username: friend.user.username,
+        username: friend.friend.user.username,
         profile_friend: friend.resource_uri,
         accounts: [],
-      })
-    );
+      });
+    });
   }, [isFocused]);
 
   useEffect(async () => {
     var members = [];
     //Adding data structure according to Group Members
-    group_friends.map((friend) =>
+    group_friends.map((friend) => {
       members.push({
-        username: friend.user.username,
-        profile_friend: friend.resource_uri,
+        username: friend.friend.user.username,
+        profile_friend: friend.friend.resource_uri,
         accounts: [],
-      })
-    );
+      });
+    });
 
     allexpense.map((expense) => {
       if (expense.group == `/group/${GroupId}/`) {
         members.map((member) => {
+          // console.log(expense.payer.resource_uri);
           if (expense.payer.friend.resource_uri !== member.profile_friend) {
             expense.splitters.map((splitter) => {
               if (
-                expense.payer.friend.resource_uri !==
+                expense.payer.friend.user.resource_uri !==
                 splitter.e_splitter.friend.resource_uri
               ) {
                 if (
                   member.profile_friend ==
                   splitter.e_splitter.friend.resource_uri
                 ) {
-                  let ref = member.accounts.find(
-                    (acc) =>
-                      acc.profile_friend == expense.payer.friend.resource_uri
-                  );
-                  if (ref) {
-                    ref.amount = ref.amount + splitter.owes;
-                  } else {
-                    member.accounts = [
-                      ...member.accounts,
-                      {
-                        username: expense.payer.friend.user.username,
-                        profile_friend: expense.payer.friend.resource_uri,
-                        amount: splitter.owes,
-                      },
-                    ];
+                  if (!expense.settled_by.includes(myfriendid)) {
+                    let ref = member.accounts.find(
+                      (acc) =>
+                        acc.profile_friend == expense.payer.friend.resource_uri
+                    );
+                    if (ref) {
+                      ref.amount = ref.amount + splitter.owes;
+                    } else {
+                      member.accounts = [
+                        ...member.accounts,
+                        {
+                          username: expense.payer.friend.user.username,
+                          profile_friend: expense.payer.friend.resource_uri,
+                          amount: splitter.owes,
+                        },
+                      ];
+                    }
                   }
                 }
               }
@@ -229,11 +246,12 @@ const GroupDetail = ({ route, navigation }) => {
       );
       member.accounts.map(function (account) {
         otherMembers.map(function (otherMember) {
-          if (otherMember.profile_friend == account.profile_friend) {
+          if (otherMember.profile_friend === account.profile_friend) {
             otherMember.accounts.map(function (oMemAccount) {
-              if (oMemAccount.profile_friend == member.profile_friend) {
+              if (oMemAccount.profile_friend === member.profile_friend) {
                 if (account.amount > oMemAccount.amount) {
                   account.amount = account.amount - oMemAccount.amount;
+                  oMemAccount.amount = 0;
                 } else {
                   oMemAccount.amount = oMemAccount.amount - account.amount;
                   account.amount = 0;
@@ -254,7 +272,7 @@ const GroupDetail = ({ route, navigation }) => {
         );
       });
     }); */
-  }, [allexpense]);
+  }, [allexpense, myfriendid]);
 
   if (addingfriend) {
     return (
@@ -271,7 +289,7 @@ const GroupDetail = ({ route, navigation }) => {
     );
   } else
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View
           style={{
             paddingLeft: 10,
@@ -310,10 +328,14 @@ const GroupDetail = ({ route, navigation }) => {
         </View>
         {showmembers ? (
           <Members
+            groupname={groupName}
+            creator={creator}
             currentuser={currentuser}
             groupmembers={groupmembers}
             setShowmembers={setShowmembers}
             groupid={GroupId}
+            setchanges={setchanges}
+            changes={changes}
           />
         ) : (
           <View
@@ -321,7 +343,7 @@ const GroupDetail = ({ route, navigation }) => {
               width: "100%",
               display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between",
+              justifyContent: "space-evenly",
               paddingHorizontal: 10,
             }}
           >
@@ -329,44 +351,40 @@ const GroupDetail = ({ route, navigation }) => {
               style={styles.addbutton}
               onPress={() => setShowmembers(true)}
             >
-              <Text style={styles.addtext}>
-                {iscreate ? null : (
-                  <AntDesign name="user" size={15} color="black" />
-                )}{" "}
-                Show Members
-              </Text>
+              <Text style={styles.addtext}>Show Members</Text>
             </Pressable>
             <Pressable
               style={styles.addbutton}
               onPress={() => Setaddingfriend(true)}
             >
-              <Text style={styles.addtext}>
-                {iscreate ? null : (
-                  <AntDesign name="user" size={15} color="black" />
-                )}{" "}
-                Add Friend
-              </Text>
+              <Text style={styles.addtext}>Add Friend</Text>
             </Pressable>
-            <Pressable
-              style={styles.addbutton}
-              onPress={() =>
-                navigation.navigate("AddExpense", {
-                  GroupId,
-                  groupName,
-                  groupmembers,
-                  currentuser,
-                  changes,
-                  setchanges,
-                })
-              }
-            >
-              <Text style={styles.addtext}>
-                {iscreate ? null : (
-                  <Ionicons name="add-circle-outline" size={15} color="black" />
-                )}{" "}
-                {iscreate ? "Cancel" : "ADD Expense"}
-              </Text>
-            </Pressable>
+            {creator == currentuser.resource_uri ? (
+              <Pressable
+                style={styles.addbutton}
+                onPress={() =>
+                  navigation.navigate("AddExpense", {
+                    GroupId,
+                    groupName,
+                    groupmembers,
+                    currentuser,
+                    changes,
+                    setchanges,
+                  })
+                }
+              >
+                <Text style={styles.addtext}>
+                  {iscreate ? null : (
+                    <Ionicons
+                      name="add-circle-outline"
+                      size={15}
+                      color="black"
+                    />
+                  )}{" "}
+                  {iscreate ? "Cancel" : "ADD Expense"}
+                </Text>
+              </Pressable>
+            ) : null}
           </View>
         )}
 
@@ -399,22 +417,33 @@ const GroupDetail = ({ route, navigation }) => {
         )}
         {iscreate ? null : (
           <View style={styles.group_balance}>
-            <GroupBalance data={statement} navigation={navigation} />
+            <GroupBalance
+              data={statement}
+              GroupId={GroupId}
+              allexpense={allexpense}
+              navigation={navigation}
+              groupName={groupName}
+            />
           </View>
         )}
-      </View>
+      </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
   expense: {
-    height: "60%",
+    position: "relative",
+    top: 10,
+
+    paddingBottom: 5,
   },
   rename: {
     width: "60%",
     height: 20,
   },
   group_balance: {
+    position: "relative",
+    top: 20,
     marginTop: 0,
     position: "relative",
     bottom: 0,

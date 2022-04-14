@@ -24,41 +24,25 @@ const DropDown = ({ transactions, payer }) => {
   const [lender, setlender] = useState("");
 
   useEffect(async () => {
-    await GetFriendsFromAllGroups(currentuser).then((data) => {
-      let temparray = [];
+    let temparray = [];
+    let obj;
 
-      data.objects.map((item) => {
-        let obj;
-        if (item.resource_uri == payer) {
-          setlender(item);
-        }
-
-        transactions.map((items) => {
-          //  console.log(item, items.e_splitter.resource_uri);
-          if (
-            item.resource_uri == items.e_splitter.resource_uri &&
-            item.friend.user.username !== payer.friend.user.username
-          ) {
-            obj = {
-              username:
-                item.friend.user.username == currentuser.username
-                  ? "You"
-                  : item.friend.user.username,
-              amount: items.owes,
-              issettled: items.settle,
-            };
-
-            temparray.push(obj);
-
-            //    console.log(obj);
-          }
+    transactions.map((transaction) => {
+      if (
+        transaction.e_splitter.friend.user.username !==
+        payer.friend.user.username
+      ) {
+        temparray.push({
+          username:
+            transaction.e_splitter.friend.user.username == currentuser.username
+              ? "You"
+              : transaction.e_splitter.friend.user.username,
+          amount: transaction.owes,
+          issettled: transaction.settle,
         });
-      });
-      //  console.log("----");
-      // console.log(temparray);
-      setSplitters(temparray);
+      }
     });
-    // console.log(transactions);
+    setSplitters(temparray);
   }, []);
 
   return (

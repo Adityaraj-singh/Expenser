@@ -1,32 +1,48 @@
 import React, { useEffect, useState } from "react";
 import GetFriendsFromAllGroups from "../../API/GetfriendsFromAllGroup";
-import { FlatList, StyleSheet, Text, Pressable, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  Pressable,
+  View,
+  Alert,
+} from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import Kick from "../../API/Kick";
 import { useIsFocused } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { LogBox } from "react-native";
 
 const Members = (props) => {
   const [frineds1, setFriends1] = useState([]);
   const [members, Setmembers] = useState([]);
   const isFocused = useIsFocused();
+  const currentuser = useSelector((state) => state.userReducer);
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
   async function KickFriend(item) {
-    await Kick(props.currentuser, item.resource_uri)
+    await Kick(props.currentuser, item)
       .then((data) => {
+        props.setchanges(!props.changes);
+        props.setShowmembers(false);
         let temp = frineds1.filter;
+        console.log(data);
       })
       .catch((err) => {
         console.log("err", err);
       });
   }
-  const removeFriend = async (user) => {
-    frineds1.filter((item) => {
-      if (
-        item.friend.user.resource_uri == user &&
-        item.group == `/group/${props.groupid}/`
-      ) {
-        KickFriend(item);
-      }
-    });
+  const removeFriend = async (title, user) => {
+    Alert.alert("Confirmation", `Remove ${title} from ${props.groupname}`, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+      { text: "Delete", onPress: () => KickFriend(user) },
+    ]);
   };
 
   async function getFriends(id) {
@@ -45,6 +61,7 @@ const Members = (props) => {
 
     Setmembers(temp);
   }, [isFocused]);
+
   const Item = ({ userid, title }) => (
     <View style={styles.item}>
       <View>
@@ -59,11 +76,13 @@ const Members = (props) => {
           {" " + title}
         </Text>
       </View>
-      <Pressable style={{ marginTop: "auto", marginBottom: "auto" }}>
-        <Text onPress={() => removeFriend(userid)}>
-          <FontAwesome name="minus-circle" size={15} color="white" />
-        </Text>
-      </Pressable>
+      {props.creator == currentuser.resource_uri ? (
+        <Pressable style={{ marginTop: "auto", marginBottom: "auto" }}>
+          <Text onPress={() => removeFriend(title, userid)}>
+            <FontAwesome name="minus-circle" size={15} color="white" />
+          </Text>
+        </Pressable>
+      ) : null}
     </View>
   );
 
@@ -71,7 +90,7 @@ const Members = (props) => {
     <Item
       key={item.resource_uri}
       userid={item.resource_uri}
-      title={item.username}
+      title={item.friend.user.username}
     />
   );
   return (
@@ -83,7 +102,7 @@ const Members = (props) => {
         >
           <FontAwesome name="plus-circle" size={25} color="black" />
         </Text>
-        <Text style={styles.heading}>My Friends</Text>
+        <Text style={styles.heading}>Members</Text>
 
         <View style={styles.inner_card}>
           <FlatList

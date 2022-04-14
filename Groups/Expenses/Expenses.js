@@ -13,12 +13,17 @@ const Expenses = ({ key, expensedata, groupmembers, navigation }) => {
   const currentuser = useSelector((state) => state.userReducer);
   const [iowe, setIowe] = useState("");
   useEffect(() => {
-    data.splitters.map((item) => {
-      if (item.e_splitter.friend.user.username == currentuser.username) {
-        setIowe(item.owes);
-      }
-    });
+    if (data.payer.friend.user.username !== currentuser.username) {
+      data.splitters.map((item) => {
+        if (item.e_splitter.friend.user.username == currentuser.username) {
+          setIowe(item.owes);
+        }
+      });
+    } else {
+      setIowe(0);
+    }
   });
+
   return (
     <View style={{ paddingHorizontal: 5 }}>
       <View style={styles.container}>
@@ -110,7 +115,7 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 10,
     width: "100%",
-    backgroundColor: "#6FCF97",
+    backgroundColor: "#FFC79E",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",

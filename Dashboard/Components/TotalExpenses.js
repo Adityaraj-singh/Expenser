@@ -146,8 +146,11 @@ const TotalExpenses = ({ state }) => {
               alignSelf: "center",
             }}
           >
-            <Text style> Expense Name - </Text>
-            <Text style={{ marginTop: 5 }}> {item.reason}</Text>
+            <Text style={{ fontSize: 10 }}> Expense Name - </Text>
+            <Text style={{ marginTop: 5, fontSize: 10, fontWeight: "bold" }}>
+              {" "}
+              {item.reason}
+            </Text>
           </Text>
         </View>
       </TouchableOpacity>
