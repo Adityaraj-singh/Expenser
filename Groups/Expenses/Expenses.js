@@ -36,9 +36,9 @@ const Expenses = ({ key, expensedata, groupmembers, navigation }) => {
                 borderBottomWidth: 2,
               }}
             >
-              {"Feb"}
+              {"April"}
             </Text>
-            <Text style={{ color: "white" }}>{"20"}</Text>
+            <Text style={{ color: "white" }}>{"14"}</Text>
           </View>
           <View style={{ width: "80%", marginLeft: 10 }}>
             <Text style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>
@@ -46,7 +46,6 @@ const Expenses = ({ key, expensedata, groupmembers, navigation }) => {
             </Text>
           </View>
         </View>
-
         <View style={styles.right}>
           <View style={styles.amount}>
             <Text

@@ -22,18 +22,20 @@ import { ShowExpense } from "../../API/ShowExpense";
 import { useSelector } from "react-redux";
 import { exp } from "react-native/Libraries/Animated/Easing";
 import { useIsFocused } from "@react-navigation/native";
-
+import { useDispatch } from "react-redux";
+import Loader from "../../Loader/Loader";
 const TotalExpenses = ({ state }) => {
   const isFocused = useIsFocused();
   const [selectedId, setSelectedId] = useState(null);
   const currentuser = useSelector((state) => state.userReducer);
   const [data, Setdata] = useState([]);
   const [expenses, setexpenses] = useState([]);
-
+  const dispatch = useDispatch();
   const [settlesexpenses, setSettledexpenses] = useState([]);
   const [id, setid] = useState([]);
   const [itake, setItake] = useState(0);
   const [settled, setSetteled] = useState([]);
+  const loaderstate = useSelector((state) => state.LoaderReducer);
   useEffect(async () => {
     let temparr = [];
     await GetFriendsFromAllGroups(currentuser).then((data) => {
@@ -47,10 +49,24 @@ const TotalExpenses = ({ state }) => {
 
     await ShowExpense(currentuser).then((data) => {
       setexpenses(data.objects);
+      dispatch({
+        type: "Load",
+        payload: {
+          isloading: false,
+          text: "Please Wait...",
+        },
+      });
     });
   }, [isFocused]);
 
   useEffect(async () => {
+    dispatch({
+      type: "Load",
+      payload: {
+        isloading: false,
+        text: "Please Wait...",
+      },
+    });
     let temp = [];
     let amount = 0;
     let oweamount = 0;
@@ -62,45 +78,9 @@ const TotalExpenses = ({ state }) => {
           }
         });
       });
-      if (expense.payer.friend.user.username != currentuser.username) {
-        expense.settled_by.map((settle) => {
-          console.log(id.includes(settle));
-          if (id.includes(settle)) {
-            expense.splitters.map((splitter) => {
-              if (
-                splitter.e_splitter.friend.user.username == currentuser.username
-              ) {
-                oweamount += splitter.owes;
-              }
-            });
-          }
-        });
-      }
     });
 
-    console.log("00", oweamount);
     setSettledexpenses(temp);
-
-    expenses.map((expense) => {
-      if (expense.payer.friend.user.username == currentuser.username) {
-        expense.splitters.map((splitter) => {
-          if (
-            !expense.settled_by.includes(splitter.e_splitter.resource_uri) &&
-            splitter.e_splitter.friend.user.username != currentuser.username
-          ) {
-            amount += splitter.owes;
-          }
-        });
-      }
-    });
-    setItake(amount);
-
-    await GetGroups(currentuser).then((data) => {
-      data.objects.map((group) => {
-        console.log(group.name, group.resource_uri);
-        expenses.map((expense) => {});
-      });
-    });
   }, [id, expenses, isFocused]);
 
   const Item = ({ item, onPress, backgroundColor, textColor }) => {
@@ -119,7 +99,7 @@ const TotalExpenses = ({ state }) => {
         <View style={styles.box}>
           <Text>
             <View style={{ fontWeight: "bold" }}>
-              <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+              <Text style={{ fontWeight: "bold", fontSize: 14 }}>
                 You paid :{" "}
               </Text>
             </View>
@@ -132,10 +112,10 @@ const TotalExpenses = ({ state }) => {
                 top: 50,
                 marginTop: 20,
                 position: "relative",
-                fontSize: 12,
+                fontSize: 10,
               }}
             >
-              <Text style={{ fontSize: 12 }}> {amount} Rs.</Text>
+              <Text style={{ fontSize: 14 }}> {amount} Rs.</Text>
             </View>
           </Text>
 
@@ -146,8 +126,8 @@ const TotalExpenses = ({ state }) => {
               alignSelf: "center",
             }}
           >
-            <Text style={{ fontSize: 10 }}> Expense Name - </Text>
-            <Text style={{ marginTop: 5, fontSize: 10, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 14 }}> Expense Name - </Text>
+            <Text style={{ marginTop: 5, fontSize: 14, fontWeight: "bold" }}>
               {" "}
               {item.reason}
             </Text>
@@ -165,6 +145,18 @@ const TotalExpenses = ({ state }) => {
   };
   return (
     <View style={styles.container}>
+      {loaderstate.isloading ? (
+        <View
+          style={{
+            position: "absolute",
+            height: 200,
+            width: "100%",
+            zIndex: 100,
+          }}
+        >
+          <Loader />
+        </View>
+      ) : null}
       <View style={[styles.card, styles.shadowProp]}>
         <Text style={styles.heading}>Your Transactions</Text>
         {settlesexpenses.length > 0 ? (

@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { AddProfile, Signinapi } from "../API/Authenticate";
 import { Getuser } from "../API/Getuser";
+import Loader from "../Loader/Loader";
 const Login = ({ Setsignup, Setuser }) => {
   const credentials = {
     username: "aditya@orgzit.com",
@@ -20,6 +21,7 @@ const Login = ({ Setsignup, Setuser }) => {
   };
   const dispatch = useDispatch();
   const userstate = useSelector((state) => state);
+  const loaderstate = useSelector((state) => state.LoaderReducer);
   const [username, Setusername] = useState("");
   const [password, Setpassword] = useState("");
   const [error, Seterror] = useState("");
@@ -28,11 +30,18 @@ const Login = ({ Setsignup, Setuser }) => {
     if (!username || !password) {
       Seterror("Please fill both fields");
     } else {
+      dispatch({
+        type: "Load",
+        payload: {
+          isloading: true,
+          text: "Logging in..",
+        },
+      });
+      console.log("----------");
+      console.log(loaderstate);
       const response = await Signinapi({ username, password });
-
+      console.log(response);
       if (JSON.stringify(response.success) == "true") {
-        console.log(response.success);
-
         await Getuser({ username: response.username, token: response.token })
           .then((data) => {
             data.objects.map((item) => {
@@ -47,6 +56,13 @@ const Login = ({ Setsignup, Setuser }) => {
                     },
                   },
                 });
+                dispatch({
+                  type: "Load",
+                  payload: {
+                    isloading: false,
+                    text: "Logging in",
+                  },
+                });
               }
             });
           })
@@ -54,6 +70,13 @@ const Login = ({ Setsignup, Setuser }) => {
             console.log(err);
           });
       } else {
+        dispatch({
+          type: "Load",
+          payload: {
+            isloading: false,
+            text: "Logging in",
+          },
+        });
         Seterror(response.error);
       }
     }
@@ -66,9 +89,23 @@ const Login = ({ Setsignup, Setuser }) => {
   return (
     <View style={stylesheet.main_container}>
       <ImageBackground
+        blurRadius={loaderstate.isloading ? 90 : 0}
         source={require("../assets/Background.png")}
         style={stylesheet.background}
       >
+        {loaderstate.isloading ? (
+          <View
+            style={{
+              position: "absolute",
+              height: 200,
+              width: "100%",
+              zIndex: 100,
+            }}
+          >
+            <Loader />
+          </View>
+        ) : null}
+
         <Text style={stylesheet.login_lable2}>Welcome Back</Text>
 
         <View style={stylesheet.inner_container}>
@@ -151,13 +188,17 @@ const stylesheet = StyleSheet.create({
   inner_container: {
     top: 20,
     height: 300,
-    width: "100%",
+    width: "95%",
+    borderRadius: 20,
+    alignSelf: "center",
     alignItems: "center",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-around",
     paddingLeft: 10,
     paddingRight: 10,
+    shadowOpacity: 1,
+    shadowColor: "#000",
   },
   input: {
     width: "100%",
@@ -195,6 +236,7 @@ const stylesheet = StyleSheet.create({
     lineHeight: 25,
     fontWeight: "bold",
     letterSpacing: 0.25,
+
     color: "white",
   },
   signupdirect_text: {

@@ -14,6 +14,9 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { AddProfile, Signupapi } from "../API/Authenticate";
 import { Getuser, SingleUser } from "../API/Getuser";
+import styles from "react-native-material-dropdown/src/components/dropdown/styles";
+import { FontAwesome } from "@expo/vector-icons";
+import Loader from "../Loader/Loader";
 const Signup = ({ Setsignup }) => {
   const [username, Setusername] = useState("");
   const [password, Setpassword] = useState("");
@@ -22,6 +25,10 @@ const Signup = ({ Setsignup }) => {
   const [lname, setlname] = useState("");
   const [usernameerror, Setusernameerror] = useState("");
   const [passwrror, Setpasserror] = useState("");
+  const [emailerror, setEmailerror] = useState("");
+  const [fnameerror, setFnameError] = useState("");
+  const [lnameerror, setLnameError] = useState("");
+  const loaderstate = useSelector((state) => state.LoaderReducer);
   const dispatch = useDispatch();
   async function Authenticate() {
     if (
@@ -31,8 +38,18 @@ const Signup = ({ Setsignup }) => {
       lname.length > 0 &&
       email.length > 0 &&
       !usernameerror &&
-      !passwrror
+      !passwrror &&
+      !fnameerror &&
+      !lnameerror &&
+      !emailerror
     ) {
+      dispatch({
+        type: "Load",
+        payload: {
+          isloading: true,
+          text: "Logging in",
+        },
+      });
       let data = {
         username: username,
         password: password,
@@ -40,6 +57,7 @@ const Signup = ({ Setsignup }) => {
         first_name: fname,
         last_name: lname,
       };
+
       const response = await Signupapi(data);
 
       if (JSON.stringify(response.success) == "true") {
@@ -66,23 +84,43 @@ const Signup = ({ Setsignup }) => {
                 });
               }
             });
+            dispatch({
+              type: "Load",
+              payload: {
+                isloading: false,
+                text: "Logging in",
+              },
+            });
           })
           .catch((err) => {
             console.log(err);
           });
       } else {
+        dispatch({
+          type: "Load",
+          payload: {
+            isloading: false,
+            text: "Logging in",
+          },
+        });
         Setusernameerror(response.error);
       }
     }
 
     if (!fname) {
-      Setpasserror("enter First name");
+      setFnameError("Please Enter First name");
     }
     if (!lname) {
-      Setpasserror("Enter Last Name");
+      setLnameError("Please  Enter Last Name");
     }
     if (!email) {
-      Setusernameerror("Enter Email");
+      setEmailerror("Enter Email");
+    }
+    if (!username) {
+      Setusernameerror("Please enter Username");
+    }
+    if (!password) {
+      Setpasserror("Please  Set a Password");
     } else if (!password && !username) {
       Setusernameerror("Please enter Username");
       Setpasserror("please enter password");
@@ -98,13 +136,28 @@ const Signup = ({ Setsignup }) => {
   useEffect(() => {
     Setusernameerror("");
     Setpasserror("");
-  }, [username, password]);
+    setEmailerror("");
+    setFnameError("");
+    setLnameError("");
+  }, [username, password, fname, lname, email]);
   return (
     <View style={stylesheet.main_container}>
       <ImageBackground
         source={require("../assets/Background.png")}
         style={stylesheet.background}
       >
+        {loaderstate.isloading ? (
+          <View
+            style={{
+              position: "absolute",
+              height: 200,
+              width: "100%",
+              zIndex: 100,
+            }}
+          >
+            <Loader />
+          </View>
+        ) : null}
         <Text style={stylesheet.signup_lable22}>Signup</Text>
 
         <View style={stylesheet.inner_container}>
@@ -113,28 +166,52 @@ const Signup = ({ Setsignup }) => {
               placeholder="First Name"
               onChangeText={(text) => Setfname(text)}
               backgroundColor="none"
-              style={stylesheet.input}
+              style={
+                fnameerror
+                  ? stylesheet.inputred
+                  : fname
+                  ? stylesheet.inputgreen
+                  : stylesheet.input
+              }
             />
           </View>
           <View style={{ width: "90%" }}>
             <TextInput
               onChangeText={(text) => setlname(text)}
               placeholder="Last Name"
-              style={stylesheet.input}
+              style={
+                lnameerror
+                  ? stylesheet.inputred
+                  : lname
+                  ? stylesheet.inputgreen
+                  : stylesheet.input
+              }
             />
           </View>
           <View style={{ width: "90%" }}>
             <TextInput
               onChangeText={(text) => Setemail(text)}
               placeholder="email"
-              style={stylesheet.input}
+              style={
+                emailerror
+                  ? stylesheet.inputred
+                  : email
+                  ? stylesheet.inputgreen
+                  : stylesheet.input
+              }
             />
           </View>
           <View style={{ width: "90%" }}>
             <TextInput
               onChangeText={(text) => Setusername(text)}
               placeholder="Username"
-              style={stylesheet.input}
+              style={
+                usernameerror
+                  ? stylesheet.inputred
+                  : username
+                  ? stylesheet.inputgreen
+                  : stylesheet.input
+              }
             />
           </View>
           <View style={{ width: "90%" }}>
@@ -142,17 +219,30 @@ const Signup = ({ Setsignup }) => {
               secureTextEntry={true}
               onChangeText={(text) => Setpassword(text)}
               placeholder="Password"
-              style={stylesheet.input}
+              style={
+                passwrror
+                  ? stylesheet.inputred
+                  : password && password.length > 8
+                  ? stylesheet.inputgreen
+                  : stylesheet.input
+              }
             />
           </View>
           <Text
             style={{ color: "red", fontWeight: "bold", fontStyle: "italic" }}
           >
             {" "}
-            {usernameerror || passwrror}
+            {usernameerror ||
+              passwrror ||
+              emailerror ||
+              fnameerror ||
+              lnameerror}
           </Text>
           <Pressable style={stylesheet.button} onPress={Authenticate}>
-            <Text style={stylesheet.text}>{"Signup->"}</Text>
+            <Text style={stylesheet.text}>Signup</Text>
+            <Text style={{ marginLeft: 2 }}>
+              <FontAwesome name="sign-in" size={24} color="white" />
+            </Text>
           </Pressable>
         </View>
 
@@ -231,6 +321,28 @@ const stylesheet = StyleSheet.create({
     position: "relative",
     top: 0,
   },
+  inputred: {
+    width: "100%",
+    height: 40,
+    backgroundColor: "white",
+    borderWidth: 2,
+    paddingLeft: 20,
+    borderColor: "red",
+    borderRadius: 10,
+    position: "relative",
+    top: 0,
+  },
+  inputgreen: {
+    width: "100%",
+    height: 40,
+    backgroundColor: "white",
+    borderWidth: 2,
+    paddingLeft: 20,
+    borderColor: "green",
+    borderRadius: 10,
+    position: "relative",
+    top: 0,
+  },
   logo: {
     height: 100,
     width: 100,
@@ -247,6 +359,8 @@ const stylesheet = StyleSheet.create({
     borderRadius: 30,
     elevation: 3,
     backgroundColor: "#2F80ED",
+    display: "flex",
+    flexDirection: "row",
   },
   text: {
     fontSize: 20,

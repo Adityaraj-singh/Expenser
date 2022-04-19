@@ -304,9 +304,11 @@ const GroupDetail = ({ route, navigation }) => {
             </Text>{" "}
             :{" "}
           </Text>
-          <Pressable style={styles.deletebtn} onPress={() => DeleteGroup()}>
-            <Text style={styles.deleteText}>Delete Group</Text>
-          </Pressable>
+          {creator == currentuser.resource_uri ? (
+            <Pressable style={styles.deletebtn} onPress={() => DeleteGroup()}>
+              <Text style={styles.deleteText}>Delete Group</Text>
+            </Pressable>
+          ) : null}
         </View>
         <View
           style={{

@@ -28,6 +28,7 @@ const Dashboard = ({ navigation }) => {
   useEffect(async () => {
     await GetProfile(state)
       .then((data) => {
+        console.log("----", data);
         let pp = data.objects.filter((item) => {
           if (item.profile_user == state.resource_uri) {
             return item.resource_uri;
@@ -71,7 +72,8 @@ const Dashboard = ({ navigation }) => {
         console.log(err);
       });
   }, []);
-
+  console.log("state");
+  console.log(state);
   return (
     <View style={styles.container}>
       <TotalExpenses state={state} />

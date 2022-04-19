@@ -68,14 +68,23 @@ const AddExpense = ({ route, navigation }) => {
       // console.log("-----------");
       console.log(id);
       data.objects.map((item) => {
+        let temp = splitters.filter((item) => {
+          if (item.friend.user.username == id) {
+            return item;
+          }
+        });
         console.log(item.friend.user.username, id);
-        if (
-          item.friend.user.username == id &&
-          item.group == `/group/${GroupId}/`
-        ) {
-          //console.log("found");
-          item["amount"] = 0;
-          setSplitters([...splitters, item]);
+        if (temp.length == 0) {
+          if (
+            item.friend.user.username == id &&
+            item.group == `/group/${GroupId}/`
+          ) {
+            //console.log("found");
+            item["amount"] = 0;
+            setSplitters([...splitters, item]);
+          }
+        } else {
+          console.log("already added");
         }
       });
     });
